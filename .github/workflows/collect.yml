@@ -4,6 +4,13 @@ name: collect
 on:
   schedule:
     - cron: "7 * * * *"
+  # 수집기 코드를 고치면 바로 한 번 실행
+  push:
+    branches: [main]
+    paths:
+      - "collector/**"
+      - "site/**"
+      - ".github/workflows/collect.yml"
   workflow_dispatch:
     inputs:
       force_discover:
