@@ -11,6 +11,7 @@ on:
       - "collector/**"
       - "site/**"
       - ".github/workflows/collect.yml"
+      - "rerun.txt"  # 이 파일을 고치면 수동 재실행
   workflow_dispatch:
     inputs:
       force_discover:
