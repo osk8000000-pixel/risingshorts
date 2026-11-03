@@ -5,13 +5,13 @@
 
 # 카테고리 20개. slug는 주소에 쓰이므로 바꾸지 않는 것이 좋습니다.
 CATEGORIES = [
-    {"slug": "mystery", "name": "미스터리·괴담", "kr": "괴담|미스터리|실화|소름", "us": "mystery|creepy|unsolved|scary story"},
+    {"slug": "mystery", "name": "미스터리·괴담", "kr": "괴담|미스터리|무서운 이야기|도시전설|공포 썰", "us": "mystery|creepy|unsolved mystery|scary story"},
     {"slug": "dog", "name": "강아지", "kr": "강아지|댕댕이|반려견", "us": "dog|puppy"},
     {"slug": "cat", "name": "고양이", "kr": "고양이|냥이|아기고양이", "us": "cat|kitten"},
     {"slug": "animals", "name": "아기동물·야생동물", "kr": "아기동물|야생동물|동물", "us": "baby animals|wildlife|animals"},
     {"slug": "parenting", "name": "육아", "kr": "육아|아기|신생아", "us": "baby|parenting|toddler"},
     {"slug": "facts", "name": "지식·잡학", "kr": "지식|상식|몰랐던 사실", "us": "facts|did you know"},
-    {"slug": "ai-video", "name": "AI 영상", "kr": "AI 영상|AI 애니메이션|인공지능 영상", "us": "AI video|AI animation|AI generated"},
+    {"slug": "ai-video", "name": "AI 영상", "kr": "AI 애니메이션|AI로 만든|AI 쇼츠|AI 영상 만들기", "us": "AI animation|AI generated|made with AI|AI short film"},
     {"slug": "cooking", "name": "요리·레시피", "kr": "레시피|요리|집밥", "us": "recipe|cooking"},
     {"slug": "mukbang", "name": "먹방·맛집", "kr": "먹방|맛집", "us": "mukbang|food review"},
     {"slug": "comedy", "name": "유머·코미디", "kr": "웃긴|개그|상황극", "us": "funny|comedy|skit"},
@@ -32,8 +32,9 @@ REGIONS = {
     "us": {"regionCode": "US", "relevanceLanguage": "en", "query_key": "us"},
 }
 
-# 새 쇼츠 찾기(검색)를 돌리는 시각, UTC 기준. 0시 = 한국 오전 9시, 12시 = 한국 오후 9시.
-DISCOVER_HOURS_UTC = {0, 12}
+# 새 쇼츠 찾기(검색) 간격. 마지막 검색 후 이 시간이 지나면 다음 실행에서 검색 (하루 2회 = 검색 80회)
+# 예약 실행이 늦어져도 하루 2회를 지키도록 시각이 아니라 경과 시간으로 판단합니다.
+DISCOVER_EVERY_HOURS = 11.5
 
 # 추적 기간: 업로드 후 이 일수가 지나면 목록에서 뺍니다.
 TRACK_DAYS = 7

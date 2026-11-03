@@ -35,8 +35,9 @@ def parse_iso(s):
 
 
 def hour_of(dt):
-    """스냅샷 시각은 '1970년부터 몇 시간째'인 정수로 저장해 파일 크기를 줄입니다."""
-    return int(dt.timestamp() // 3600)
+    """스냅샷 시각은 '1970년부터 몇 시간째'를 소수 둘째 자리까지 저장합니다.
+    (예약 실행이 정시보다 늦어도 실제 경과 시간으로 속도를 계산하기 위함)"""
+    return round(dt.timestamp() / 3600, 2)
 
 
 def duration_seconds(d):
@@ -92,7 +93,7 @@ def make_video(item, now):
 def add_snapshot(v, item, now):
     st = item.get("statistics", {})
     snap = [hour_of(now), int(st.get("viewCount", 0)), int(st.get("likeCount", 0)), int(st.get("commentCount", 0))]
-    if v["s"] and v["s"][-1][0] == snap[0]:
+    if v["s"] and snap[0] - v["s"][-1][0] < 0.25:  # 15분 안에 다시 돌면 덮어씀
         v["s"][-1] = snap
     else:
         v["s"].append(snap)
@@ -182,7 +183,7 @@ def metrics(v, subs, now):
         if s[0] <= win_start:
             base = s
     if base is not snaps[-1]:
-        hours = max(snaps[-1][0] - base[0], 1)
+        hours = max(snaps[-1][0] - base[0], 0.5)
         velocity = (views - base[1]) / hours
         measured = True
     else:
@@ -206,10 +207,25 @@ def is_korean(v):
     return bool(HANGUL.search(v.get("t", "") + " ".join(v.get("tags") or [])))
 
 
+LATIN = re.compile(r"[A-Za-z]")
+LETTER = re.compile(r"[^\W\d_]")
+NON_EN_AUDIO = ("hi", "bn", "ur", "ar", "ta", "te", "mr", "ko", "ja", "zh", "th", "ru")
+
+
+def is_global(v):
+    """해외 순위에는 영어권 쇼츠만: 제목 글자의 85% 이상이 로마자이고, 음성 언어가 비영어권이 아님."""
+    if (v.get("lang") or "").lower().startswith(NON_EN_AUDIO):
+        return False
+    letters = LETTER.findall(v.get("t", ""))
+    if not letters:
+        return False
+    return len(LATIN.findall(v.get("t", ""))) / len(letters) >= 0.85
+
+
 def in_region(v, rkey):
     if rkey not in v["regions"]:
         return False
-    return is_korean(v) if rkey == "kr" else True
+    return is_korean(v) if rkey == "kr" else is_global(v)
 
 
 def card(vid, v, m, with_series):
@@ -268,7 +284,7 @@ def _write(path, obj):
 
 
 def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
-    now = (now or datetime.now(timezone.utc)).replace(minute=0, second=0, microsecond=0)
+    now = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     state = load_state(state_path)
     day = now.astimezone(PACIFIC).strftime("%Y-%m-%d")
     quota = state["quota"].get(day) or {"searches": 0, "units": 0}
@@ -277,8 +293,14 @@ def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
     log = []
     try:
         skip = set()
-        if force_discover or now.hour in config.DISCOVER_HOURS_UTC or not state["videos"]:
+        if "last_discover" not in state and state["videos"]:
+            # 이전 버전에서 넘어온 상태: 직전 검색을 마지막 기록 시각으로 간주 (할당량 중복 사용 방지)
+            state["last_discover"] = iso(now)
+        last = state.get("last_discover")
+        due = last is None or (now - parse_iso(last)) >= timedelta(hours=config.DISCOVER_EVERY_HOURS)
+        if force_discover or due or not state["videos"]:
             skip = discover(yt, state, now, log)
+            state["last_discover"] = iso(now)
         gone = prune(state, now)
         n = refresh_views(yt, state, now, skip)
         c = refresh_channels(yt, state, now)
