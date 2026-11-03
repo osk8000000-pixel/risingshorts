@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>라이징쇼츠 (데이터 점검용)</title>
+<style>
+  :root { --bg:#fff; --fg:#111; --muted:#666; --line:#e5e5e5; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#eee; --muted:#999; --line:#333; } }
+  body { margin:0; padding:16px; font-family:system-ui,sans-serif; background:var(--bg); color:var(--fg); }
+  select, button { font-size:15px; padding:6px; }
+  ol { padding-left:24px; } li { padding:8px 0; border-bottom:1px solid var(--line); }
+  .m { color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<h1>라이징쇼츠 · 데이터 점검 화면</h1>
+<p class="m">정식 화면을 만들기 전, 수집이 잘 되는지 보는 임시 페이지입니다.</p>
+<select id="region"><option value="kr">국내</option><option value="us">해외</option></select>
+<select id="cat"><option value="">전체 (홈)</option></select>
+<p class="m" id="info"></p>
+<ol id="list"></ol>
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n == null ? '-' : n.toLocaleString('ko-KR');
+async function load() {
+  const r = $('region').value, c = $('cat').value;
+  const url = c ? `data/cat-${c}-${r}.json` : `data/home-${r}.json`;
+  try {
+    const d = await (await fetch(url, {cache: 'no-store'})).json();
+    const items = d.items || d.by_score || [];
+    $('info').textContent = `갱신: ${new Date(d.updated).toLocaleString('ko-KR')} · ${items.length}개`;
+    $('list').innerHTML = items.map(v => `<li><a href="https://www.youtube.com/shorts/${v.id}" target="_blank" rel="noopener">${v.t.replace(/</g,'&lt;')}</a><br><span class="m">${v.cn.replace(/</g,'&lt;')} · 조회수 ${fmt(v.views)} · 시간당 ${fmt(v.vph)} · 구독자 대비 ${v.ratio ?? '-'}배</span></li>`).join('');
+  } catch (e) { $('info').textContent = '아직 데이터가 없습니다.'; $('list').innerHTML = ''; }
+}
+fetch('data/meta.json', {cache: 'no-store'}).then(r => r.json()).then(m => {
+  $('cat').innerHTML += m.categories.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+}).catch(() => {});
+$('region').onchange = load; $('cat').onchange = load; load();
+</script>
+</body>
+</html>
