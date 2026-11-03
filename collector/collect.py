@@ -283,10 +283,17 @@ def main():
     ap.add_argument("--out", default="site/data")
     ap.add_argument("--force-discover", action="store_true")
     a = ap.parse_args()
-    key = os.environ.get("YT_API_KEY")
+    key = (os.environ.get("YT_API_KEY") or "").strip()
     if not key:
-        sys.exit("YT_API_KEY 환경변수가 없습니다 (GitHub Secrets에 등록 필요)")
-    run(key, a.state, a.out, a.force_discover)
+        # ::error:: 줄은 GitHub 실행 요약(Annotations)에 그대로 표시됨
+        print("::error::YT_API_KEY 비밀값이 비어 있습니다. 저장소 Settings > Secrets and variables > Actions에 등록하세요.")
+        sys.exit(1)
+    try:
+        run(key, a.state, a.out, a.force_discover)
+    except Exception as e:  # 원인을 요약 화면에 남기고 실패 처리
+        msg = str(e).replace(key, "[KEY]").replace("\n", " ")[:600]
+        print(f"::error::수집 실패 - {type(e).__name__}: {msg}")
+        raise
 
 
 if __name__ == "__main__":
