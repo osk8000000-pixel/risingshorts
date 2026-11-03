@@ -196,6 +196,22 @@ def metrics(v, subs, now):
             "subs": subs, "age_h": round(age_h, 1), "score": round(score, 1)}
 
 
+HANGUL = re.compile(r"[\uac00-\ud7a3]")
+
+
+def is_korean(v):
+    """국내 순위에는 한국어 쇼츠만: 음성 언어가 한국어이거나 제목·태그에 한글이 있으면 통과."""
+    if (v.get("lang") or "").lower().startswith("ko"):
+        return True
+    return bool(HANGUL.search(v.get("t", "") + " ".join(v.get("tags") or [])))
+
+
+def in_region(v, rkey):
+    if rkey not in v["regions"]:
+        return False
+    return is_korean(v) if rkey == "kr" else True
+
+
 def card(vid, v, m, with_series):
     c = {"id": vid, "t": v["t"], "cn": v["cn"], "ch": v["ch"], "th": v["th"], "pub": v["pub"],
          "dur": v["dur"], "cats": v["cats"], **m}
@@ -218,12 +234,12 @@ def build_outputs(state, now, out_dir):
 
     written = 0
     for rkey in config.REGIONS:
-        in_region = lambda v, rk=rkey: rk in v["regions"]
-        home = {"updated": iso(now), "region": rkey, "items": top(in_region, "score", config.TOP_N_HOME)}
+        home = {"updated": iso(now), "region": rkey,
+                "items": top(lambda v, rk=rkey: in_region(v, rk), "score", config.TOP_N_HOME)}
         _write(os.path.join(out_dir, f"home-{rkey}.json"), home)
         written += 1
         for cat in config.CATEGORIES:
-            f = lambda v, rk=rkey, cs=cat["slug"]: rk in v["regions"] and cs in v["cats"]
+            f = lambda v, rk=rkey, cs=cat["slug"]: in_region(v, rk) and cs in v["cats"]
             payload = {"updated": iso(now), "region": rkey, "category": cat["slug"], "name": cat["name"],
                        "by_score": top(f, "score", config.TOP_N_CATEGORY),
                        "by_ratio": top(f, "ratio", config.TOP_N_CATEGORY, series=False),
@@ -233,7 +249,7 @@ def build_outputs(state, now, out_dir):
         # 키워드 검색용 가벼운 목록
         idx = [{"id": vid, "t": v["t"], "cn": v["cn"], "tags": v["tags"], "cats": v["cats"],
                 "th": v["th"], "views": m["views"], "vph": m["vph"], "ratio": m["ratio"], "score": m["score"]}
-               for vid, v, m in rows if rkey in v["regions"]]
+               for vid, v, m in rows if in_region(v, rkey)]
         idx.sort(key=lambda x: x["score"], reverse=True)
         _write(os.path.join(out_dir, f"search-{rkey}.json"), {"updated": iso(now), "items": idx})
         written += 1
