@@ -105,6 +105,12 @@ def main():
         print(f"추적 영상 {len(state['videos'])}개, 상태 파일 {size / 1024:.0f}KB, 출력 파일 {len(files)}개")
         print("API 호출 수(3일):", fake.calls)
         print("최근 로그:", state["log"][0])
+        # 6) 예비 실행: 직전 실행 10분 뒤에 다시 돌면 API를 부르지 않고 건너뜀
+        before = dict(fake.calls)
+        fake.now = fake.now + timedelta(minutes=10)
+        again = collect.run("TEST", state_path, out, now=fake.now, fetch=fake)
+        assert fake.calls == before, "예비 실행이 API를 호출함"
+        assert again["log"][0] == state["log"][0]
         print("모든 테스트 통과")
     finally:
         shutil.rmtree(tmp)

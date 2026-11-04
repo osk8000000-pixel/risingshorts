@@ -291,6 +291,12 @@ def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
     state["quota"] = {day: quota}  # 오늘 것만 보관
     yt = YouTube(key, quota, config.SEARCH_BUDGET_PER_DAY, config.UNIT_BUDGET_PER_DAY, fetch=fetch)
     log = []
+    last_run = state.get("last_run")
+    if not force_discover and last_run and (now - parse_iso(last_run)) < timedelta(minutes=config.MIN_RUN_GAP_MINUTES):
+        # 예약 실행을 시간당 2번 걸어 두었으므로, 직전 실행이 최근이면 이번은 건너뜀 (빠진 시간만 메우는 예비 실행)
+        files = build_outputs(state, now, out_dir)
+        print(f"직전 실행({last_run})이 {config.MIN_RUN_GAP_MINUTES}분 이내라 건너뜀. 출력 파일 {files}개")
+        return state
     try:
         skip = set()
         if "last_discover" not in state and state["videos"]:
@@ -310,6 +316,7 @@ def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
     files = build_outputs(state, now, out_dir)
     log.append(f"할당량 사용(태평양 {day}): 검색 {quota['searches']}회, 단위 {quota['units']}")
     state["log"] = ([f"{iso(now)} " + " | ".join(log)] + state.get("log", []))[:72]
+    state["last_run"] = iso(now)
     save_state(state, state_path)
     print("\n".join(log) + f"\n출력 파일 {files}개, 추적 중 {len(state['videos'])}개")
     return state

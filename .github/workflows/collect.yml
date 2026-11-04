@@ -1,9 +1,11 @@
 name: collect
 
-# 매시간 7분에 실행 (정각은 GitHub 서버가 붐벼 지연이 잦음)
+# 시간당 2번 예약 (7분, 37분). GitHub 예약 실행은 가끔 빠지거나 늦어지므로,
+# 수집기는 직전 실행 후 45분이 안 지났으면 건너뛰어 사실상 매시간 1번만 수집합니다.
 on:
   schedule:
     - cron: "7 * * * *"
+    - cron: "37 * * * *"
   # 수집기 코드를 고치면 바로 한 번 실행
   push:
     branches: [main]
@@ -43,30 +45,43 @@ jobs:
           mkdir -p state
           if git ls-remote --exit-code --heads origin data >/dev/null; then
             git fetch --depth=1 origin data
-            git show origin/data:state.json.gz > state/state.json.gz
+            git show FETCH_HEAD:state.json.gz > state/state.json.gz
           fi
 
       - name: Collect
+        id: collect
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: |
           python collector/collect.py --state state/state.json.gz --out site/data ${{ inputs.force_discover && '--force-discover' || '' }}
 
+      # 저장 실패가 가끔 있어 3번까지 다시 시도. 토큰은 checkout이 설정한 인증 헤더를 그대로 씀(주소에 넣지 않음)
       - name: Save state
         run: |
+          HEADER="$(git config --get http.https://github.com/.extraheader)"
           cd state
           git init -q -b data
           git config user.name "risingshorts-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config http.https://github.com/.extraheader "$HEADER"
           git add state.json.gz
-          git commit -qm "state $(date -u +%Y-%m-%dT%H)"
-          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data:data
+          git commit -qm "state $(date -u +%Y-%m-%dT%H:%M)"
+          for i in 1 2 3; do
+            if out=$(git push -f "https://github.com/${{ github.repository }}.git" data:data 2>&1); then
+              echo "saved (try $i)"; exit 0
+            fi
+            echo "::warning::상태 저장 재시도 $i: $(echo "$out" | tail -2 | tr '\n' ' ')"
+            sleep $((i * 15))
+          done
+          echo "::error::상태 저장 3번 실패: $(echo "$out" | tail -3 | tr '\n' ' ')"
+          exit 1
 
+      # 저장이 실패해도 수집 결과는 사이트에 반영
       - name: Deploy to Cloudflare Pages
+        if: ${{ always() && steps.collect.outcome == 'success' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        if: env.CLOUDFLARE_API_TOKEN != ''
         run: |
           npx --yes wrangler@3 pages project create risingshorts --production-branch=main 2>/dev/null || true
           npx --yes wrangler@3 pages deploy site --project-name=risingshorts --branch=main --commit-dirty=true

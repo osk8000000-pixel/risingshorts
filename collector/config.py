@@ -15,7 +15,7 @@ CATEGORIES = [
     {"slug": "cooking", "name": "요리·레시피", "kr": "레시피|요리|집밥", "us": "recipe|cooking"},
     {"slug": "mukbang", "name": "먹방·맛집", "kr": "먹방|맛집", "us": "mukbang|food review"},
     {"slug": "comedy", "name": "유머·코미디", "kr": "웃긴|개그|상황극", "us": "funny|comedy|skit"},
-    {"slug": "gaming", "name": "게임", "kr": "게임|마인크래프트|로블록스", "us": "gaming|minecraft|roblox"},
+    {"slug": "gaming", "name": "게임", "kr": "게임 하이라이트|롤|리그오브레전드|발로란트|배그|메이플스토리|모바일게임", "us": "gaming|minecraft|roblox"},
     {"slug": "beauty", "name": "뷰티·메이크업", "kr": "메이크업|화장|뷰티", "us": "makeup|beauty"},
     {"slug": "fashion", "name": "패션", "kr": "코디|패션|옷", "us": "outfit|fashion"},
     {"slug": "fitness", "name": "운동·홈트", "kr": "홈트|운동|다이어트 운동", "us": "workout|fitness|gym"},
@@ -38,6 +38,10 @@ DISCOVER_EVERY_HOURS = 11.5
 
 # 추적 기간: 업로드 후 이 일수가 지나면 목록에서 뺍니다.
 TRACK_DAYS = 7
+
+# 예약 실행은 시간당 2번(7분, 37분) 걸려 있고, 직전 실행 후 이 시간(분)이 안 지났으면 건너뜁니다.
+# GitHub 예약 실행이 가끔 빠지거나 늦어져도 매시간 갱신을 지키기 위한 예비 실행입니다.
+MIN_RUN_GAP_MINUTES = 45
 
 # 쇼츠 판별: 이 길이(초) 이하 + 세로 화면
 MAX_SHORT_SECONDS = 180
