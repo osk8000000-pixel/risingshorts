@@ -27,6 +27,24 @@ CATEGORIES = [
     {"slug": "dance", "name": "음악·댄스 챌린지", "kr": "챌린지|커버댄스|댄스", "us": "dance challenge|dance|cover"},
 ]
 
+# 주제 확인: 검색에 걸렸더라도 제목·태그에 이 단어가 하나도 없으면 해당 카테고리 순위에서 뺍니다.
+# (검색이 설명글까지 뒤져서 "실화?!" 같은 유행어 영상이 섞이는 카테고리에만 씁니다. 대소문자 무시)
+TOPIC_MUST = {
+    "mystery": {
+        "kr": r"괴담|미스터리|무서운|공포|귀신|도시전설|미제|실종|심령|저주|폐가|흉가|오싹|기묘한",
+        "us": r"mystery|mysterious|creepy|scary|horror|unsolved|haunted|ghost|paranormal|disappear",
+    },
+    "ai-video": {
+        "kr": r"(?<![a-z])ai(?![a-z])|인공지능",
+        "us": r"(?<![a-z])ai(?![a-z])|artificial intelligence",
+    },
+}
+
+# 자동 포함: 어느 검색으로 들어왔든 제목·태그에 이 표현이 있으면 해당 카테고리 순위에도 넣습니다.
+TOPIC_AUTO = {
+    "ai-video": r"ai ?영상|ai ?애니|ai ?동물|ai ?쇼츠|ai로 만든|#ai(?![a-z])|ai generated|ai animation|made with ai|ai video",
+}
+
 REGIONS = {
     "kr": {"regionCode": "KR", "relevanceLanguage": "ko", "query_key": "kr"},
     "us": {"regionCode": "US", "relevanceLanguage": "en", "query_key": "us"},

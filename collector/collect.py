@@ -228,6 +228,26 @@ def in_region(v, rkey):
     return is_korean(v) if rkey == "kr" else is_global(v)
 
 
+_TOPIC_RE = {(cat, r): re.compile(pat, re.I) for cat, rr in config.TOPIC_MUST.items() for r, pat in rr.items()}
+
+
+_AUTO_RE = {cat: re.compile(pat, re.I) for cat, pat in config.TOPIC_AUTO.items()}
+
+
+def in_category(v, cat, rkey):
+    text = v.get("t", "") + " " + " ".join(v.get("tags") or [])
+    if cat in _AUTO_RE and _AUTO_RE[cat].search(text):
+        return True
+    return cat in v["cats"] and topic_ok(v, cat, rkey)
+
+
+def topic_ok(v, cat, rkey):
+    rx = _TOPIC_RE.get((cat, rkey))
+    if not rx:
+        return True
+    return bool(rx.search(v.get("t", "") + " " + " ".join(v.get("tags") or [])))
+
+
 def card(vid, v, m, with_series):
     c = {"id": vid, "t": v["t"], "cn": v["cn"], "ch": v["ch"], "th": v["th"], "pub": v["pub"],
          "dur": v["dur"], "cats": v["cats"], **m}
@@ -255,7 +275,7 @@ def build_outputs(state, now, out_dir):
         _write(os.path.join(out_dir, f"home-{rkey}.json"), home)
         written += 1
         for cat in config.CATEGORIES:
-            f = lambda v, rk=rkey, cs=cat["slug"]: in_region(v, rk) and cs in v["cats"]
+            f = lambda v, rk=rkey, cs=cat["slug"]: in_region(v, rk) and in_category(v, cs, rk)
             payload = {"updated": iso(now), "region": rkey, "category": cat["slug"], "name": cat["name"],
                        "by_score": top(f, "score", config.TOP_N_CATEGORY),
                        "by_ratio": top(f, "ratio", config.TOP_N_CATEGORY, series=False),
