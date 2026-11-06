@@ -206,7 +206,7 @@ HOW_TO = [
 
 
 # ---------- 페이지 ----------
-def render_all(site_dir, tpl_dir, homes, cats, details, updated):
+def render_all(site_dir, tpl_dir, homes, cats, details, updated, reports=None):
     """homes: {region: items}, cats: {(slug, region): payload}, details: {id: detail}."""
     tpl = {n: open(os.path.join(tpl_dir, n), encoding="utf-8").read()
            for n in os.listdir(tpl_dir) if n.endswith(".html")}
@@ -300,8 +300,11 @@ def render_all(site_dir, tpl_dir, homes, cats, details, updated):
         _w(os.path.join(vdir, f"{vid}.html"), page)
         written += 1
 
-    # 주간 리포트
-    _w(os.path.join(site_dir, "report.html"), fill(tpl["report.html"], {"report": report_html(homes, cats, updated)}, path="/report"))
+    # 주간 리포트 (이번 주 + 지난 주들)
+    current = report_data(homes, cats, updated)
+    if reports is not None:
+        reports[current["key"]] = current
+    render_reports(site_dir, tpl["report.html"], current, reports or {})
     written += 1
 
     # 문의 (이메일은 config.CONTACT_EMAIL)
@@ -337,14 +340,21 @@ def _median(xs):
     return xs[m] if len(xs) % 2 else (xs[m - 1] + xs[m]) / 2
 
 
-def report_html(homes, cats, updated):
-    """매시간 갱신되는 '이번 주' 리포트: 최근 7일 업로드 쇼츠 기준."""
-    end = datetime.fromisoformat(updated.replace("Z", "+00:00")).astimezone(KST)
-    start = end - timedelta(days=7)
-    period = f"{start.month}월 {start.day}일 ~ {end.month}월 {end.day}일"
-    parts = [f'<section class="head"><div><p class="stamp">{period} 업로드 쇼츠 · {kst_text(updated)} 갱신</p>'
-             '<h1>이번 주 쇼츠 리포트</h1><p class="lead">최근 7일 동안 올라온 쇼츠 가운데 국내와 해외에서 무엇이 가장 크게 뜨고 있는지, '
-             '라이징쇼츠가 1시간마다 모은 데이터로 자동 정리했어요.</p></div></section>']
+CARD_KEYS = ("id", "t", "cn", "views", "vph", "ratio", "dur", "age_h", "subs")
+
+
+def week_info(updated):
+    """KST 기준 그 주 월요일과 주차 키 (예: 2026-W45)."""
+    d = datetime.fromisoformat(updated.replace("Z", "+00:00")).astimezone(KST)
+    monday = (d - timedelta(days=d.weekday())).date()
+    y, w, _ = monday.isocalendar()
+    return f"{y}-W{w:02d}", monday
+
+
+def report_data(homes, cats, updated):
+    """리포트에 필요한 숫자만 뽑아 둔다 (주차별로 상태 파일에 저장해 지난 리포트를 남김)."""
+    key, monday = week_info(updated)
+    out = {"key": key, "monday": monday.isoformat(), "updated": updated, "regions": {}}
     for r in ("kr", "us"):
         seen, pool = set(), []
         for c in config.CATEGORIES:
@@ -353,31 +363,75 @@ def report_html(homes, cats, updated):
                     seen.add(v["id"])
                     pool.append(v)
         pool.sort(key=lambda v: -(v.get("views") or 0))
-        top = pool[:10]
         stats = []
         for c in config.CATEGORIES:
             it = (cats.get((c["slug"], r)) or {}).get("by_score", [])[:20]
             if it:
-                stats.append((c, _median([v.get("vph") or 0 for v in it]), _median([v["dur"] for v in it if v.get("dur")])))
+                stats.append([c["slug"], _median([v.get("vph") or 0 for v in it]), _median([v["dur"] for v in it if v.get("dur")])])
         stats.sort(key=lambda x: -x[1])
-        hot, cold = stats[:3], stats[-3:]
+        out["regions"][r] = {"top": [{k: v.get(k) for k in CARD_KEYS} for v in pool[:10]], "stats": stats}
+    return out
+
+
+def report_html(data, current=True, archive=()):
+    names = {c["slug"]: c["name"] for c in config.CATEGORIES}
+    updated = data["updated"]
+    monday = datetime.fromisoformat(data["monday"])
+    sunday = monday + timedelta(days=6)
+    if current:
+        end = datetime.fromisoformat(updated.replace("Z", "+00:00")).astimezone(KST)
+        start = end - timedelta(days=7)
+        stamp = f"{start.month}월 {start.day}일 ~ {end.month}월 {end.day}일 업로드 쇼츠 · {kst_text(updated)} 갱신"
+        h1 = "이번 주 쇼츠 리포트"
+    else:
+        stamp = f"{monday.month}월 {monday.day}일 ~ {sunday.month}월 {sunday.day}일 주간 · 마지막 집계 {kst_text(updated)}"
+        h1 = f"{monday.year}년 {monday.month}월 {monday.day}일 주간 쇼츠 리포트"
+    parts = [f'<section class="head"><div><p class="stamp">{stamp}</p><h1>{h1}</h1>'
+             '<p class="lead">최근 7일 동안 올라온 쇼츠 가운데 국내와 해외에서 무엇이 가장 크게 떴는지, '
+             '라이징쇼츠가 1시간마다 모은 데이터로 자동 정리한 리포트예요.</p></div></section>']
+    for r in ("kr", "us"):
+        reg = data["regions"].get(r) or {"top": [], "stats": []}
+        top, stats = reg["top"], reg["stats"]
+        verb = "가장 많이 본" if current else "가장 많이 본"
         lines = []
         if top:
             v = top[0]
-            lines.append(f"이번 주 {RNAME[r]}에서 가장 많이 본 쇼츠는 {esc(v['cn'])}의 「{esc(title(v['t']))}」로, 누적 조회수 {kn(v.get('views'))}를 기록했어요.")
-        if hot:
-            lines.append("지금 가장 빠르게 조회수가 늘고 있는 분야는 " + ", ".join(f"{esc(c['name'])}(상위 20개 시간당 조회 중앙값 {kn(m)})" for c, m, _ in hot) + "예요.")
-        if cold:
-            lines.append("반대로 " + ", ".join(esc(c["name"]) for c, _, _ in cold) + " 분야는 이번 주 상위권 영상의 속도가 상대적으로 느렸어요.")
-        rows = "".join(f'<tr><td><a href="/{r}/{c["slug"]}">{esc(c["name"])}</a></td><td class="num">{kn(m)}</td><td class="num">{round(d)}초</td></tr>'
-                       for c, m, d in stats)
+            lines.append(f"{'이번 주' if current else '이 주에'} {RNAME[r]}에서 {verb} 쇼츠는 {esc(v['cn'])}의 「{esc(title(v['t']))}」로, 누적 조회수 {kn(v.get('views'))}를 기록했어요.")
+        if stats:
+            lines.append(("지금" if current else "이 주에") + " 가장 빠르게 조회수가 늘던 분야는 " +
+                         ", ".join(f"{esc(names.get(sl, sl))}(상위 20개 시간당 조회 중앙값 {kn(m)})" for sl, m, _ in stats[:3]) + "였어요.")
+            lines.append("반대로 " + ", ".join(esc(names.get(sl, sl)) for sl, _, _ in stats[-3:]) + " 분야는 상위권 영상의 속도가 상대적으로 느렸어요.")
+        rows = "".join(f'<tr><td><a href="/{r}/{sl}">{esc(names.get(sl, sl))}</a></td><td class="num">{kn(m)}</td><td class="num">{round(d)}초</td></tr>'
+                       for sl, m, d in stats)
         parts.append(f'<section class="section"><h2>{RNAME[r]}{" (영어권)" if r == "us" else ""}</h2>'
                      + "".join(f'<p class="lead" style="color:var(--ink2)">{l}</p>' for l in lines)
-                     + f'<h3 style="margin:10px 0 0;font-size:17px">이번 주 가장 많이 본 쇼츠 TOP 10</h3><div class="grid5">'
+                     + f'<h3 style="margin:10px 0 0;font-size:17px">가장 많이 본 쇼츠 TOP 10</h3><div class="grid5">'
                      + "".join(card(v, i + 1) for i, v in enumerate(top)) + "</div>"
                      + '<h3 style="margin:18px 0 0;font-size:17px">카테고리별 속도와 길이</h3>'
                      + '<div class="prose" style="max-width:none;padding:8px 18px"><table class="tbl"><thead><tr><th>카테고리</th><th>시간당 조회 (상위 20개 중앙값)</th><th>영상 길이 (중앙값)</th></tr></thead><tbody>'
                      + rows + "</tbody></table></div></section>")
-    parts.append('<p class="help">리포트는 매시간 자동으로 갱신돼요. 숫자는 유튜브 공개 데이터로 계산한 추정치예요. '
+    if archive:
+        parts.append('<section class="section"><h2 style="font-size:19px">지난 리포트</h2><ul class="links">'
+                     + "".join(f'<li><a href="/report/{k}">{lab}</a></li>' for k, lab in archive) + "</ul></section>")
+    parts.append('<p class="help">숫자는 유튜브 공개 데이터로 계산한 추정치예요. '
                  '<a href="/guide/how-to-read-rankings">지표 읽는 법 보기</a></p>')
     return "".join(parts)
+
+
+def render_reports(site_dir, tpl, current, archive_data):
+    """/report (이번 주) 와 /report/2026-W45 같은 지난 주 리포트들."""
+    past = sorted((d for k, d in archive_data.items() if k != current["key"]), key=lambda d: d["key"], reverse=True)
+
+    def label(d):
+        m = datetime.fromisoformat(d["monday"])
+        return f"{m.year}년 {m.month}월 {m.day}일 주간"
+    links = [(d["key"], label(d)) for d in past]
+    _w(os.path.join(site_dir, "report.html"), fill(tpl, {"report": report_html(current, True, links)}, path="/report"))
+    rdir = os.path.join(site_dir, "report")
+    os.makedirs(rdir, exist_ok=True)
+    for d in past:
+        others = [(k, l) for k, l in links if k != d["key"]]
+        _w(os.path.join(rdir, f"{d['key']}.html"),
+           fill(tpl, {"report": report_html(d, False, others)}, title_text=f"{label(d)} 쇼츠 리포트 | 라이징쇼츠",
+                desc=f"{label(d)} 국내·해외에서 가장 많이 본 쇼츠 TOP 10과 카테고리별 흐름.", path=f"/report/{d['key']}"))
+    return [d["key"] for d in past]

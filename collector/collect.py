@@ -312,10 +312,12 @@ def build_outputs(state, now, out_dir):
         _write(os.path.join(out_dir, f"search-{rkey}.json"), {"updated": iso(now), "items": idx})
         written += 1
     details = write_details(rows, ranks, cat_lists, now, out_dir)
-    write_sitemap(now, out_dir)
     tpl_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
     if os.path.isdir(tpl_dir):
-        render.render_all(os.path.dirname(os.path.abspath(out_dir)), tpl_dir, homes, cat_payloads, details, iso(now))
+        render.render_all(os.path.dirname(os.path.abspath(out_dir)), tpl_dir, homes, cat_payloads, details, iso(now),
+                          reports=state.setdefault("reports", {}))
+    past = sorted(k for k in state.get("reports", {}) if k != render.week_info(iso(now))[0])
+    write_sitemap(now, out_dir, past)
     _write(os.path.join(out_dir, "meta.json"), {
         "updated": iso(now),
         "categories": [{"slug": c["slug"], "name": c["name"]} for c in config.CATEGORIES],
@@ -355,13 +357,14 @@ def write_details(rows, ranks, cat_lists, now, out_dir):
 SITE = "https://risingshorts.com"
 
 
-def write_sitemap(now, out_dir):
+def write_sitemap(now, out_dir, past_reports=()):
     """검색엔진용 사이트맵: 홈·카테고리 순위 페이지 (매시간 갱신 시각을 lastmod로 표시)."""
     stamp = iso(now)
     urls = [("/", "hourly"), ("/us", "hourly")]
     for r in config.REGIONS:
         urls += [(f"/{r}/{c['slug']}", "hourly") for c in config.CATEGORIES]
     urls += [("/report", "daily"), ("/guide", "weekly")]
+    urls += [(f"/report/{k}", "yearly") for k in past_reports]
     tpl_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
     urls += [(f"/guide/{g}", "monthly") for g in render.guide_slugs(tpl_dir)]
     urls += [("/about", "monthly"), ("/contact", "yearly"), ("/privacy", "yearly")]
