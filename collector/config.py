@@ -80,4 +80,4 @@ TOP_N_CATEGORY = 50
 TOP_N_HOME = 20
 
 # 사이트에 공개하는 문의 이메일 (문의 페이지)
-CONTACT_EMAIL = ""
+CONTACT_EMAIL = "risingshorts.help@gmail.com"
