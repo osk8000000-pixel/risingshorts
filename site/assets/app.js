@@ -81,6 +81,7 @@ const meta = () => get('meta.json').catch(() => META_FALLBACK);
 
 /* 주소 형식: /  /us  /kr/카테고리  /us/카테고리  /v/영상ID  /search?q= (옛 ?c=&r= 주소도 읽음) */
 const SITE = 'https://risingshorts.com';
+if (/\.pages\.dev$/.test(location.hostname)) { location.replace(SITE + location.pathname + location.search); }
 const parts = location.pathname.replace(/\.html$/, '').split('/').filter(Boolean);
 function region() {
   if (parts[0] === 'us' || parts[0] === 'kr') return parts[0];
