@@ -79,17 +79,29 @@ function get(path) {
 const META_FALLBACK = { categories: [] };
 const meta = () => get('meta.json').catch(() => META_FALLBACK);
 
+/* 주소 형식: /  /us  /kr/카테고리  /us/카테고리  /v/영상ID  /search?q= (옛 ?c=&r= 주소도 읽음) */
+const SITE = 'https://risingshorts.com';
+const parts = location.pathname.replace(/\.html$/, '').split('/').filter(Boolean);
 function region() {
+  if (parts[0] === 'us' || parts[0] === 'kr') return parts[0];
   const r = params.get('r');
-  if (r === 'kr' || r === 'us') { try { localStorage.setItem('rs-region', r); } catch (e) {} return r; }
-  try { const s = localStorage.getItem('rs-region'); if (s === 'kr' || s === 'us') return s; } catch (e) {}
-  return 'kr';
+  return r === 'us' ? 'us' : 'kr';
 }
 const RNAME = { kr: '국내', us: '해외' };
 function link(page, q) {
-  const u = new URLSearchParams(q);
-  const s = u.toString();
-  return '/' + page + (s ? '?' + s : '');
+  q = q || {};
+  if (page === '') return q.r === 'us' ? '/us' : '/';
+  if (page === 'category') return `/${q.r === 'us' ? 'us' : 'kr'}/${encodeURIComponent(q.c)}`;
+  if (page === 'video') return '/v/' + encodeURIComponent(q.id);
+  const u = new URLSearchParams(q).toString();
+  return '/' + page + (u ? '?' + u : '');
+}
+function canonical(path) {
+  let el = document.querySelector('link[rel="canonical"]');
+  if (!el) { el = document.createElement('link'); el.rel = 'canonical'; document.head.appendChild(el); }
+  el.href = SITE + path;
+  const og = document.querySelector('meta[property="og:url"]');
+  if (og) og.setAttribute('content', SITE + path);
 }
 
 /* ---------- 공통 조각 ---------- */
@@ -119,6 +131,7 @@ function setTitle(t, desc) {
 /* ---------- 홈 ---------- */
 async function home() {
   const r = region();
+  canonical(link('', { r }));
   $('#tabs').innerHTML = regionTabs(r, (x) => link('', { r: x }));
   $('#heroTitle').textContent = r === 'kr' ? '지금 가장 빠르게 뜨는 국내 쇼츠' : '지금 가장 빠르게 뜨는 해외 쇼츠';
   $('#top5').innerHTML = skeleton(5, 420);
@@ -152,12 +165,13 @@ const PERIODS = [{ h: 168, label: '7일' }, { h: 72, label: '3일' }, { h: 24, l
 async function category() {
   const r = region();
   const m = await meta();
-  const slug = params.get('c') || (m.categories[0] || {}).slug;
+  const slug = (parts.length >= 2 && (parts[0] === 'kr' || parts[0] === 'us') ? decodeURIComponent(parts[1]) : params.get('c')) || (m.categories[0] || {}).slug;
   const cat = m.categories.find((c) => c.slug === slug);
   if (!cat) { $('#grid').outerHTML = '<div class="empty">없는 카테고리예요. <a href="/">홈으로 가기</a></div>'; return; }
   $('#crumbName').textContent = cat.name;
   $('#name').textContent = `${cat.name} 쇼츠 떡상 순위`;
   setTitle(`${cat.name} 쇼츠 떡상 순위 (${RNAME[r]}) | 라이징쇼츠`, `${cat.name} 분야에서 지금 가장 빠르게 조회수가 늘고 있는 ${RNAME[r]} 유튜브 쇼츠 순위. 1시간마다 갱신.`);
+  canonical(link('category', { c: slug, r }));
   $('#tabs').innerHTML = regionTabs(r, (x) => link('category', { c: slug, r: x }));
   $('#others').innerHTML = catChips(m.categories.filter((c) => c.slug !== slug), r, null);
   $('#grid').innerHTML = skeleton(10, 420);
@@ -275,7 +289,7 @@ function insight(v, series) {
   return s;
 }
 async function video() {
-  const id = params.get('id') || '';
+  const id = (parts[0] === 'v' && parts[1]) ? decodeURIComponent(parts[1]) : (params.get('id') || '');
   if (!/^[\w-]{6,20}$/.test(id)) { $('#detail').innerHTML = '<div class="empty">영상을 찾을 수 없어요. <a href="/">홈으로 가기</a></div>'; return; }
   const yt = `https://www.youtube.com/shorts/${id}`;
   let v = null;
@@ -287,6 +301,7 @@ async function video() {
   if (!v) { $('#detail').innerHTML = `<div class="empty">순위 추적이 끝난 영상이에요 (업로드 7일 경과). <a href="${yt}" target="_blank" rel="noopener">유튜브에서 보기</a></div>`; return; }
   const m = await meta();
   const t = title(v.t);
+  canonical(link('video', { id }));
   setTitle(`${t} - 조회수 추이 | 라이징쇼츠`, `${v.cn}의 쇼츠 "${t}" 조회수 ${kn(v.views)}, 시간당 ${kn(v.vph)} 증가. 구독자 대비 ${ratioText(v.ratio) || '-'}.`);
   const firstCat = (v.ranks || []).find((x) => x.slug);
   $('#crumbs').innerHTML = `<a href="/">홈</a><span aria-hidden="true">›</span>${firstCat ? `<a href="${link('category', { c: firstCat.slug, r: firstCat.region })}">${esc(firstCat.label)}</a><span aria-hidden="true">›</span>` : ''}<b>영상 상세</b>`;

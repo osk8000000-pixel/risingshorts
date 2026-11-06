@@ -1,0 +1,6 @@
+# 보기 좋은 주소를 실제 화면 파일로 연결 (주소창은 그대로)
+/kr        /          301
+/us        /index     200
+/kr/:slug  /category  200
+/us/:slug  /category  200
+/v/:id     /video     200

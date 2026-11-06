@@ -209,17 +209,24 @@ def is_korean(v):
 
 LATIN = re.compile(r"[A-Za-z]")
 LETTER = re.compile(r"[^\W\d_]")
-NON_EN_AUDIO = ("hi", "bn", "ur", "ar", "ta", "te", "mr", "ko", "ja", "zh", "th", "ru")
+NON_EN_AUDIO = ("hi", "bn", "ur", "ar", "ta", "te", "mr", "ko", "ja", "zh", "th", "ru",
+                "es", "pt", "fr", "de", "it", "id", "vi", "tr", "pl", "nl")
+# 스페인어·포르투갈어 등 로마자를 쓰는 다른 언어 제목 걸러내기
+ROMANCE_MARK = re.compile(r"[ñ¿¡ãõ]", re.I)
+ROMANCE_WORD = re.compile(r"\b(de|la|el|los|las|que|por|para|con|una|sin|del|y|en|um|uma|não|com|você|le|les|des|du|et|une|und|der|die|das)\b", re.I)
 
 
 def is_global(v):
     """해외 순위에는 영어권 쇼츠만: 제목 글자의 85% 이상이 로마자이고, 음성 언어가 비영어권이 아님."""
     if (v.get("lang") or "").lower().startswith(NON_EN_AUDIO):
         return False
-    letters = LETTER.findall(v.get("t", ""))
+    t = v.get("t", "")
+    letters = LETTER.findall(t)
     if not letters:
         return False
-    return len(LATIN.findall(v.get("t", ""))) / len(letters) >= 0.85
+    if ROMANCE_MARK.search(t) or len(ROMANCE_WORD.findall(t)) >= 2:
+        return False
+    return len(LATIN.findall(t)) / len(letters) >= 0.85
 
 
 def in_region(v, rkey):
@@ -301,6 +308,7 @@ def build_outputs(state, now, out_dir):
         _write(os.path.join(out_dir, f"search-{rkey}.json"), {"updated": iso(now), "items": idx})
         written += 1
     write_details(rows, ranks, cat_lists, now, out_dir)
+    write_sitemap(now, out_dir)
     _write(os.path.join(out_dir, "meta.json"), {
         "updated": iso(now),
         "categories": [{"slug": c["slug"], "name": c["name"]} for c in config.CATEGORIES],
@@ -332,6 +340,23 @@ def write_details(rows, ranks, cat_lists, now, out_dir):
             "updated": iso(now), "id": vid, "region": region, "t": v["t"], "cn": v["cn"], "ch": v["ch"],
             "th": v["th"], "pub": v["pub"], "dur": v["dur"], "tags": v["tags"], **m,
             "series": [[s[0], s[1]] for s in v["s"]][-48:], "ranks": rk[:6], "related": related})
+
+
+SITE = "https://risingshorts.com"
+
+
+def write_sitemap(now, out_dir):
+    """검색엔진용 사이트맵: 홈·카테고리 순위 페이지 (매시간 갱신 시각을 lastmod로 표시)."""
+    stamp = iso(now)
+    urls = [("/", "hourly"), ("/us", "hourly")]
+    for r in config.REGIONS:
+        urls += [(f"/{r}/{c['slug']}", "hourly") for c in config.CATEGORIES]
+    urls += [("/about", "monthly"), ("/privacy", "yearly")]
+    body = "".join(f"<url><loc>{SITE}{u}</loc><lastmod>{stamp}</lastmod><changefreq>{f}</changefreq></url>"
+                   for u, f in urls)
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + body + "</urlset>\n"
+    with open(os.path.join(os.path.dirname(os.path.abspath(out_dir)), "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(xml)
 
 
 def _write(path, obj):
