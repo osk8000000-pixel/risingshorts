@@ -3,3 +3,8 @@ site/data/*.json
 __pycache__/
 site/data/v/
 site/sitemap.xml
+# 수집기가 매시간 만드는 페이지 (틀은 templates/)
+site/*.html
+site/kr/
+site/us/
+site/v/

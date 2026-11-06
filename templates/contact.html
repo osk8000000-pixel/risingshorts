@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, follow">
-<title>키워드로 떡상 쇼츠 찾기 | 라이징쇼츠</title>
-<meta name="description" content="키워드로 지금 뜨는 유튜브 쇼츠를 찾아보세요.">
-<meta property="og:title" content="키워드로 떡상 쇼츠 찾기 | 라이징쇼츠">
-<meta property="og:description" content="키워드로 지금 뜨는 유튜브 쇼츠를 찾아보세요.">
+<title>문의 | 라이징쇼츠</title>
+<meta name="description" content="라이징쇼츠 문의 안내">
+<meta property="og:title" content="문의 | 라이징쇼츠">
+<meta property="og:description" content="라이징쇼츠 문의 안내">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="라이징쇼츠">
 <meta property="og:url" content="https://risingshorts.com/">
+<link rel="canonical" href="https://risingshorts.com/">
 <meta property="og:image" content="https://risingshorts.com/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1E4FD8">
@@ -19,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/app.css?v=2">
+<link rel="stylesheet" href="/assets/app.css?v=3">
 </head>
-<body data-page="search">
+<body data-page="contact">
 <header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="라이징쇼츠 홈">
@@ -31,7 +31,8 @@
     <nav class="nav" aria-label="주 메뉴">
       <a href="/" data-nav="home">지금 뜨는 쇼츠</a>
       <a href="/kr/dog" data-nav="category">카테고리</a>
-      <a href="/about" data-nav="about">소개</a>
+      <a href="/report" data-nav="report">주간 리포트</a>
+      <a href="/guide" data-nav="guide">가이드</a>
     </nav>
     <form class="qbox" role="search" action="/search" method="get">
       <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="#5A616C" stroke-width="2"/><path d="M20 20 L16 16" stroke="#5A616C" stroke-width="2" stroke-linecap="round"/></svg>
@@ -41,29 +42,12 @@
   </div>
 </header>
 <main class="wrap">
-
-<form class="bigq" role="search" action="/search" method="get">
-  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="#1E4FD8" stroke-width="2"/><path d="M20 20 L16 16" stroke="#1E4FD8" stroke-width="2" stroke-linecap="round"/></svg>
-  <label class="sr" for="bigq">키워드 검색</label>
-  <input id="bigq" name="q" type="search" placeholder="예: 진돗개, 괴담, 챌린지" autocomplete="off">
-  <button type="submit">검색</button>
-</form>
-<section class="head" style="margin-top:28px">
-  <div><h1 id="title" style="font-size:30px">검색</h1><p class="lead" id="sub"></p></div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-    <div class="tabs" role="tablist" aria-label="지역" id="tabs"></div>
-    <div class="segs bar" style="margin:0;padding:4px" role="group" aria-label="정렬" id="sortWrap" hidden><span class="segs" id="sorts"></span></div>
-  </div>
-</section>
-<div class="stats" id="stats" hidden style="margin-top:20px"></div>
-<section aria-label="검색 결과" id="results" style="margin-top:20px"></section>
-<section class="section"><h2 style="font-size:18px">카테고리로 둘러보기</h2><nav class="chips" id="cats"></nav></section>
-
+<article class="prose"><h1 style="font-size:30px">문의</h1><p>라이징쇼츠에 대한 의견, 오류 제보, 순위에서 영상 제외 요청, 제휴 문의는 아래 이메일로 보내 주세요. 보통 2~3일 안에 답장드립니다.</p><p style="font-size:18px"><b>이메일</b>: <!--@email--></p><h2>영상 제외 요청</h2><p>본인 영상이 순위에 보이는 것을 원하지 않으면 영상 주소와 함께 메일을 보내 주세요. 확인 후 순위에서 제외합니다.</p></article>
 <footer class="foot">
   <span>라이징쇼츠는 YouTube Data API를 사용하며 YouTube와 제휴 관계가 아닙니다.</span>
-  <nav aria-label="사이트 정보"><a href="/about">소개</a><a href="/privacy">개인정보처리방침</a></nav>
+  <nav aria-label="사이트 정보"><a href="/about">소개</a><a href="/guide">가이드</a><a href="/contact">문의</a><a href="/privacy">개인정보처리방침</a></nav>
 </footer>
 </main>
-<script src="/assets/app.js?v=2" defer></script>
+<script src="/assets/app.js?v=3" defer></script>
 </body>
 </html>

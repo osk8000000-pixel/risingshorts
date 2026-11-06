@@ -9,6 +9,7 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':
 function trim1(n) { const s = n.toFixed(1); return s.endsWith('.0') ? s.slice(0, -2) : s; }
 function kn(n) {
   if (n == null || isNaN(n)) return '-';
+  n = Math.max(n, 0);
   const a = Math.abs(n);
   if (a >= 1e8) return trim1(n / 1e8) + '억';
   if (a >= 1e5) return Math.round(n / 1e4).toLocaleString('ko-KR') + '만';
@@ -135,7 +136,7 @@ async function home() {
   canonical(link('', { r }));
   $('#tabs').innerHTML = regionTabs(r, (x) => link('', { r: x }));
   $('#heroTitle').textContent = r === 'kr' ? '지금 가장 빠르게 뜨는 국내 쇼츠' : '지금 가장 빠르게 뜨는 해외 쇼츠';
-  $('#top5').innerHTML = skeleton(5, 420);
+  if (!$('#top5').children.length) $('#top5').innerHTML = skeleton(5, 420);
   meta().then((m) => { $('#cats').innerHTML = catChips(m.categories, r, null); });
   try {
     const d = await get(`home-${r}.json`);
@@ -175,7 +176,7 @@ async function category() {
   canonical(link('category', { c: slug, r }));
   $('#tabs').innerHTML = regionTabs(r, (x) => link('category', { c: slug, r: x }));
   $('#others').innerHTML = catChips(m.categories.filter((c) => c.slug !== slug), r, null);
-  $('#grid').innerHTML = skeleton(10, 420);
+  if (!$('#grid').children.length) $('#grid').innerHTML = skeleton(10, 420);
   let d;
   try { d = await get(`cat-${slug}-${r}.json`); } catch (e) { $('#grid').outerHTML = '<div class="empty">순위를 불러오지 못했어요.</div>'; return; }
   const st = { sort: 'by_score', period: 168, shown: 20 };

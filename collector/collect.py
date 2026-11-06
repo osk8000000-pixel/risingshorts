@@ -20,7 +20,8 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import config  # noqa: E402
+import config
+import render  # noqa: E402
 from youtube import QuotaExceeded, YouTube  # noqa: E402
 
 PACIFIC = ZoneInfo("America/Los_Angeles")  # 유튜브 할당량은 태평양 시간 자정에 초기화
@@ -278,6 +279,7 @@ def build_outputs(state, now, out_dir):
     written = 0
     ranks = {}  # 상세 화면용: 영상별 순위 배지
     cat_lists = {}
+    homes, cat_payloads = {}, {}
 
     def note(items, label, slug, rkey):
         for i, c in enumerate(items):
@@ -287,6 +289,7 @@ def build_outputs(state, now, out_dir):
         home = {"updated": iso(now), "region": rkey,
                 "items": top(lambda v, rk=rkey: in_region(v, rk), "score", config.TOP_N_HOME)}
         _write(os.path.join(out_dir, f"home-{rkey}.json"), home)
+        homes[rkey] = home["items"]
         note(home["items"], "국내 전체" if rkey == "kr" else "해외 전체", "", rkey)
         written += 1
         for cat in config.CATEGORIES:
@@ -299,6 +302,7 @@ def build_outputs(state, now, out_dir):
             _write(os.path.join(out_dir, f"cat-{cat['slug']}-{rkey}.json"), payload)
             note(payload["by_score"], cat["name"], cat["slug"], rkey)
             cat_lists[(cat["slug"], rkey)] = payload["by_score"]
+            cat_payloads[(cat["slug"], rkey)] = payload
             written += 1
         # 키워드 검색용 가벼운 목록
         idx = [{"id": vid, "t": v["t"], "cn": v["cn"], "tags": v["tags"], "cats": v["cats"],
@@ -307,8 +311,11 @@ def build_outputs(state, now, out_dir):
         idx.sort(key=lambda x: x["score"], reverse=True)
         _write(os.path.join(out_dir, f"search-{rkey}.json"), {"updated": iso(now), "items": idx})
         written += 1
-    write_details(rows, ranks, cat_lists, now, out_dir)
+    details = write_details(rows, ranks, cat_lists, now, out_dir)
     write_sitemap(now, out_dir)
+    tpl_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
+    if os.path.isdir(tpl_dir):
+        render.render_all(os.path.dirname(os.path.abspath(out_dir)), tpl_dir, homes, cat_payloads, details, iso(now))
     _write(os.path.join(out_dir, "meta.json"), {
         "updated": iso(now),
         "categories": [{"slug": c["slug"], "name": c["name"]} for c in config.CATEGORIES],
@@ -326,6 +333,7 @@ def write_details(rows, ranks, cat_lists, now, out_dir):
             os.remove(os.path.join(vdir, name))
     os.makedirs(vdir, exist_ok=True)
     by_id = {vid: (v, m) for vid, v, m in rows}
+    out = {}
     for vid, rk in ranks.items():
         v, m = by_id[vid]
         rk.sort(key=lambda x: (x["slug"] != "", x["rank"]))
@@ -336,10 +344,12 @@ def write_details(rows, ranks, cat_lists, now, out_dir):
                 related = [{k: c[k] for k in ("id", "t", "cn", "th", "vph", "dur")}
                            for c in cat_lists[(r["slug"], r["region"])] if c["id"] != vid][:4]
                 break
-        _write(os.path.join(vdir, f"{vid}.json"), {
-            "updated": iso(now), "id": vid, "region": region, "t": v["t"], "cn": v["cn"], "ch": v["ch"],
-            "th": v["th"], "pub": v["pub"], "dur": v["dur"], "tags": v["tags"], **m,
-            "series": [[s[0], s[1]] for s in v["s"]][-48:], "ranks": rk[:6], "related": related})
+        d = {"updated": iso(now), "id": vid, "region": region, "t": v["t"], "cn": v["cn"], "ch": v["ch"],
+             "th": v["th"], "pub": v["pub"], "dur": v["dur"], "tags": v["tags"], **m,
+             "series": [[s[0], s[1]] for s in v["s"]][-48:], "ranks": rk[:6], "related": related}
+        _write(os.path.join(vdir, f"{vid}.json"), d)
+        out[vid] = d
+    return out
 
 
 SITE = "https://risingshorts.com"
@@ -351,7 +361,10 @@ def write_sitemap(now, out_dir):
     urls = [("/", "hourly"), ("/us", "hourly")]
     for r in config.REGIONS:
         urls += [(f"/{r}/{c['slug']}", "hourly") for c in config.CATEGORIES]
-    urls += [("/about", "monthly"), ("/privacy", "yearly")]
+    urls += [("/report", "daily"), ("/guide", "weekly")]
+    tpl_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
+    urls += [(f"/guide/{g}", "monthly") for g in render.guide_slugs(tpl_dir)]
+    urls += [("/about", "monthly"), ("/contact", "yearly"), ("/privacy", "yearly")]
     body = "".join(f"<url><loc>{SITE}{u}</loc><lastmod>{stamp}</lastmod><changefreq>{f}</changefreq></url>"
                    for u, f in urls)
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + body + "</urlset>\n"
