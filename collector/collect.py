@@ -269,18 +269,29 @@ def build_outputs(state, now, out_dir):
         return [card(vid, v, m, series) for vid, v, m in sel[:n]]
 
     written = 0
+    ranks = {}  # 상세 화면용: 영상별 순위 배지
+    cat_lists = {}
+
+    def note(items, label, slug, rkey):
+        for i, c in enumerate(items):
+            ranks.setdefault(c["id"], []).append({"label": label, "slug": slug, "region": rkey, "rank": i + 1})
+
     for rkey in config.REGIONS:
         home = {"updated": iso(now), "region": rkey,
                 "items": top(lambda v, rk=rkey: in_region(v, rk), "score", config.TOP_N_HOME)}
         _write(os.path.join(out_dir, f"home-{rkey}.json"), home)
+        note(home["items"], "국내 전체" if rkey == "kr" else "해외 전체", "", rkey)
         written += 1
         for cat in config.CATEGORIES:
             f = lambda v, rk=rkey, cs=cat["slug"]: in_region(v, rk) and in_category(v, cs, rk)
             payload = {"updated": iso(now), "region": rkey, "category": cat["slug"], "name": cat["name"],
                        "by_score": top(f, "score", config.TOP_N_CATEGORY),
                        "by_ratio": top(f, "ratio", config.TOP_N_CATEGORY, series=False),
-                       "by_views": top(f, "views", config.TOP_N_CATEGORY, series=False)}
+                       "by_views": top(f, "views", config.TOP_N_CATEGORY, series=False),
+                       "total": sum(1 for r in rows if f(r[1]))}
             _write(os.path.join(out_dir, f"cat-{cat['slug']}-{rkey}.json"), payload)
+            note(payload["by_score"], cat["name"], cat["slug"], rkey)
+            cat_lists[(cat["slug"], rkey)] = payload["by_score"]
             written += 1
         # 키워드 검색용 가벼운 목록
         idx = [{"id": vid, "t": v["t"], "cn": v["cn"], "tags": v["tags"], "cats": v["cats"],
@@ -289,6 +300,7 @@ def build_outputs(state, now, out_dir):
         idx.sort(key=lambda x: x["score"], reverse=True)
         _write(os.path.join(out_dir, f"search-{rkey}.json"), {"updated": iso(now), "items": idx})
         written += 1
+    write_details(rows, ranks, cat_lists, now, out_dir)
     _write(os.path.join(out_dir, "meta.json"), {
         "updated": iso(now),
         "categories": [{"slug": c["slug"], "name": c["name"]} for c in config.CATEGORIES],
@@ -296,6 +308,30 @@ def build_outputs(state, now, out_dir):
         "quota": state["quota"],
     })
     return written + 1
+
+
+def write_details(rows, ranks, cat_lists, now, out_dir):
+    """순위에 오른 영상마다 상세 화면용 파일(data/v/영상ID.json)을 만든다."""
+    vdir = os.path.join(out_dir, "v")
+    if os.path.isdir(vdir):
+        for name in os.listdir(vdir):
+            os.remove(os.path.join(vdir, name))
+    os.makedirs(vdir, exist_ok=True)
+    by_id = {vid: (v, m) for vid, v, m in rows}
+    for vid, rk in ranks.items():
+        v, m = by_id[vid]
+        rk.sort(key=lambda x: (x["slug"] != "", x["rank"]))
+        region = rk[0]["region"]
+        related = []
+        for r in rk:
+            if r["slug"]:
+                related = [{k: c[k] for k in ("id", "t", "cn", "th", "vph", "dur")}
+                           for c in cat_lists[(r["slug"], r["region"])] if c["id"] != vid][:4]
+                break
+        _write(os.path.join(vdir, f"{vid}.json"), {
+            "updated": iso(now), "id": vid, "region": region, "t": v["t"], "cn": v["cn"], "ch": v["ch"],
+            "th": v["th"], "pub": v["pub"], "dur": v["dur"], "tags": v["tags"], **m,
+            "series": [[s[0], s[1]] for s in v["s"]][-48:], "ranks": rk[:6], "related": related})
 
 
 def _write(path, obj):

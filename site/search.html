@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>키워드로 떡상 쇼츠 찾기 | 라이징쇼츠</title>
+<meta name="description" content="키워드로 지금 뜨는 유튜브 쇼츠를 찾아보세요.">
+<meta property="og:title" content="키워드로 떡상 쇼츠 찾기 | 라이징쇼츠">
+<meta property="og:description" content="키워드로 지금 뜨는 유튜브 쇼츠를 찾아보세요.">
+<meta name="theme-color" content="#1E4FD8">
+<link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/app.css?v=1">
+</head>
+<body data-page="search">
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="라이징쇼츠 홈">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#1E4FD8"/><path d="M8 20 L13.5 13.5 L17 17 L22 10" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 10 H22 V14" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>라이징쇼츠</span>
+    </a>
+    <nav class="nav" aria-label="주 메뉴">
+      <a href="/" data-nav="home">지금 뜨는 쇼츠</a>
+      <a href="/category" data-nav="category">카테고리</a>
+      <a href="/about" data-nav="about">소개</a>
+    </nav>
+    <form class="qbox" role="search" action="/search" method="get">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="#5A616C" stroke-width="2"/><path d="M20 20 L16 16" stroke="#5A616C" stroke-width="2" stroke-linecap="round"/></svg>
+      <label class="sr" for="q">키워드 검색</label>
+      <input id="q" name="q" type="search" placeholder="키워드로 찾기 (예: 진돗개, 괴담)" autocomplete="off">
+    </form>
+  </div>
+</header>
+<main class="wrap">
+
+<form class="bigq" role="search" action="/search" method="get">
+  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="#1E4FD8" stroke-width="2"/><path d="M20 20 L16 16" stroke="#1E4FD8" stroke-width="2" stroke-linecap="round"/></svg>
+  <label class="sr" for="bigq">키워드 검색</label>
+  <input id="bigq" name="q" type="search" placeholder="예: 진돗개, 괴담, 챌린지" autocomplete="off">
+  <button type="submit">검색</button>
+</form>
+<section class="head" style="margin-top:28px">
+  <div><h1 id="title" style="font-size:30px">검색</h1><p class="lead" id="sub"></p></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div class="tabs" role="tablist" aria-label="지역" id="tabs"></div>
+    <div class="segs bar" style="margin:0;padding:4px" role="group" aria-label="정렬" id="sortWrap" hidden><span class="segs" id="sorts"></span></div>
+  </div>
+</section>
+<div class="stats" id="stats" hidden style="margin-top:20px"></div>
+<section aria-label="검색 결과" id="results" style="margin-top:20px"></section>
+<section class="section"><h2 style="font-size:18px">카테고리로 둘러보기</h2><nav class="chips" id="cats"></nav></section>
+
+<footer class="foot">
+  <span>라이징쇼츠는 YouTube Data API를 사용하며 YouTube와 제휴 관계가 아닙니다.</span>
+  <nav aria-label="사이트 정보"><a href="/about">소개</a><a href="/privacy">개인정보처리방침</a></nav>
+</footer>
+</main>
+<script src="/assets/app.js?v=1" defer></script>
+</body>
+</html>

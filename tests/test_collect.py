@@ -99,8 +99,11 @@ def main():
         first = home["items"][0]
         print("1위:", first["t"], "| 시간당", first["vph"], "| 구독자 대비", first["ratio"], "| 측정값 사용:", first["measured"])
         assert first["measured"], "3일 뒤에는 실제 측정 속도를 써야 함"
-        files = sorted(os.listdir(out))
+        files = sorted(f for f in os.listdir(out) if f.endswith(".json"))
         assert len(files) == 2 * (len(config.CATEGORIES) + 2) + 1, len(files)
+        detail = json.load(open(os.path.join(out, "v", first["id"] + ".json"), encoding="utf-8"))
+        assert detail["ranks"][0]["rank"] == 1 and detail["series"], "상세 파일에 순위·추이가 있어야 함"
+        print("상세 파일", len(os.listdir(os.path.join(out, "v"))), "개, 1위 배지:", detail["ranks"][:3])
         size = os.path.getsize(state_path)
         print(f"추적 영상 {len(state['videos'])}개, 상태 파일 {size / 1024:.0f}KB, 출력 파일 {len(files)}개")
         print("API 호출 수(3일):", fake.calls)
