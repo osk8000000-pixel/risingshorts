@@ -15,12 +15,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
+      - name: Restore SNS state and fetch shared Threads key branch
+        run: |
+          pip install -q "pillow==12.*"
+          git fetch -q --depth=1 origin data:refs/remotes/origin/data ipo-data:refs/remotes/origin/ipo-data || true
+          mkdir -p ipo/data
+          git show origin/ipo-data:social.json > ipo/data/social.json 2>/dev/null || echo '{}' > ipo/data/social.json
       - name: Collect IPO schedule from DART
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: python ipo/collector.py ipo/data
       - name: Build site
         run: python ipo/render.py ipo/data/ipos.json ipo/out
+      - name: Prepare Threads post (weekday mornings)
+        id: sns
+        continue-on-error: true
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: python ipo/threads.py prepare ipo/data/ipos.json ipo/out ipo/data/social.json
       - name: Deploy to Cloudflare Pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -28,6 +41,10 @@ jobs:
         run: |
           npx --yes wrangler@3 pages project create gongmojuday --production-branch=main 2>/dev/null || true
           npx --yes wrangler@3 pages deploy ipo/out --project-name=gongmojuday --branch=main --commit-dirty=true
+      - name: Post to Threads
+        if: ${{ hashFiles('ipo/out/social/pending.json') != '' }}
+        continue-on-error: true
+        run: python ipo/threads.py post ipo/out/social/pending.json
       - name: Save data to ipo-data branch
         run: |
           mkdir -p /tmp/ipo-data && cp ipo/data/*.json /tmp/ipo-data/
