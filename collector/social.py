@@ -24,6 +24,7 @@ SITE = "https://risingshorts.com"
 GRAPH = "https://graph.threads.net/v1.0"
 POST_HOUR_KST = 20
 FONT_URLS = [
+    "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/NotoSansKR%5Bwght%5D.ttf",
     "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR%5Bwght%5D.ttf",
 ]
 TOKEN_FILE = os.path.join("state", ".threads_token")
