@@ -81,17 +81,25 @@ def kind_of(report_nm):
 
 # ---------- 수집 ----------
 def fetch_filings(key, today):
-    """최근 발행공시 전부 (여러 쪽)."""
-    start = (today - timedelta(days=LOOKBACK_DAYS)).strftime("%Y%m%d")
-    end = today.strftime("%Y%m%d")
-    out, page = [], 1
-    while True:
-        d = get("list.json", key, bgn_de=start, end_de=end, pblntf_ty="C", page_no=page, page_count=100)
-        out += d.get("list", [])
-        if page >= int(d.get("total_page") or 1):
-            break
-        page += 1
-        time.sleep(0.2)
+    """최근 발행공시 전부. corp_code 없이 조회하면 기간이 3개월로 제한되므로 80일씩 나눠 받는다."""
+    out, seen = [], set()
+    win_end = today
+    first = today - timedelta(days=LOOKBACK_DAYS)
+    while win_end >= first:
+        win_start = max(first, win_end - timedelta(days=79))
+        page = 1
+        while True:
+            d = get("list.json", key, bgn_de=win_start.strftime("%Y%m%d"), end_de=win_end.strftime("%Y%m%d"),
+                    pblntf_ty="C", page_no=page, page_count=100)
+            for f in d.get("list", []):
+                if f.get("rcept_no") not in seen:
+                    seen.add(f.get("rcept_no"))
+                    out.append(f)
+            if page >= int(d.get("total_page") or 1):
+                break
+            page += 1
+            time.sleep(0.2)
+        win_end = win_start - timedelta(days=1)
     return out
 
 
