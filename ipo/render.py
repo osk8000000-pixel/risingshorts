@@ -144,6 +144,7 @@ def page(path, title, desc, body, nav="", noindex=False, extra=""):
 <meta property="og:image" content="{SITE}/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B7A55">
+<meta name="naver-site-verification" content="b2168079f28f3f433be932c7443688fa087ac304" />
 <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
