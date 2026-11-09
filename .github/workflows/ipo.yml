@@ -1,0 +1,29 @@
+name: ipo
+on:
+  schedule:
+    - cron: "21 * * * *"
+  push:
+    paths: ["ipo/**", ".github/workflows/ipo.yml"]
+  workflow_dispatch:
+concurrency: ipo
+permissions:
+  contents: write
+jobs:
+  ipo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Collect IPO schedule from DART
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: python ipo/collector.py ipo/data
+      - name: Save data to ipo-data branch
+        run: |
+          mkdir -p /tmp/ipo-data && cp ipo/data/*.json /tmp/ipo-data/
+          cd /tmp/ipo-data
+          git init -q -b ipo-data
+          git config user.name "ipo-bot"; git config user.email "ipo-bot@users.noreply.github.com"
+          git add -A && git commit -q -m "IPO data $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ipo-data
