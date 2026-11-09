@@ -1,6 +1,6 @@
 """공모주데이 Threads 자동 게시 (라이징쇼츠와 같은 Threads 계정 사용).
 
-평일 아침(한국 시간 8시 이후 첫 실행) 하루 한 번, '오늘 청약 공모주' 카드와 글을 올린다.
+평일 아침(한국 시간 8~12시 사이 첫 실행) 하루 한 번, '오늘 청약 공모주' 카드와 글을 올린다.
 - 준비: python ipo/threads.py prepare <ipos.json> <사이트 출력 폴더> <social.json>
   카드 이미지를 <out>/social/YYYYMMDD.png 로, 게시 정보를 <out>/social/pending.json 으로 만든다.
 - 게시: python ipo/threads.py post <out>/social/pending.json  (배포가 끝난 뒤)
@@ -149,7 +149,7 @@ def prepare(ipos_path, out_dir, social_path):
             st = json.load(f)
     force = os.path.exists(FORCE_FILE) and open(FORCE_FILE).read().strip() == stamp and st.get("forced") != stamp
     if not force:
-        if today.weekday() >= 5 or now.hour < POST_HOUR_KST or st.get("prepared") == stamp:
+        if today.weekday() >= 5 or not (POST_HOUR_KST <= now.hour < 12) or st.get("prepared") == stamp:
             return False
     with open(ipos_path, encoding="utf-8") as f:
         items = json.load(f)["items"]
