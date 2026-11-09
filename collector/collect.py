@@ -380,6 +380,24 @@ def _write(path, obj):
         json.dump(obj, f, ensure_ascii=False, separators=(",", ":"))
 
 
+def _social(state, out_dir, now):
+    """매일 20시 이후 첫 실행에서 SNS 게시물 준비. social_force.txt 에 오늘 날짜(YYYYMMDD)를 적으면 그날 한 번 즉시 준비."""
+    try:
+        import social
+        force = False
+        force_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "social_force.txt")
+        if os.path.exists(force_file):
+            want = open(force_file).read().strip()
+            today = now.astimezone(social.KST).strftime("%Y%m%d")
+            if want == today and state.get("social", {}).get("forced") != today:
+                force = True
+                state.setdefault("social", {})["forced"] = today
+        return social.prepare(state, os.path.dirname(os.path.abspath(out_dir)), now, force=force)
+    except Exception as e:  # SNS 문제로 수집이 멈추면 안 됨
+        print(f"::warning::SNS 게시물 준비 실패: {str(e)[:200]}")
+        return False
+
+
 def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
     now = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     state = load_state(state_path)
@@ -393,6 +411,8 @@ def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
         # 예약 실행을 시간당 2번 걸어 두었으므로, 직전 실행이 최근이면 이번은 건너뜀 (빠진 시간만 메우는 예비 실행)
         files = build_outputs(state, now, out_dir)
         print(f"직전 실행({last_run})이 {config.MIN_RUN_GAP_MINUTES}분 이내라 건너뜀. 출력 파일 {files}개")
+        if _social(state, out_dir, now):
+            save_state(state, state_path)
         return state
     try:
         skip = set()
@@ -411,6 +431,8 @@ def run(key, state_path, out_dir, force_discover=False, now=None, fetch=None):
     except QuotaExceeded as e:
         log.append(f"할당량 안전선 도달, 다음 실행에 이어서 진행: {e}")
     files = build_outputs(state, now, out_dir)
+    if _social(state, out_dir, now):
+        log.append("SNS: 오늘의 TOP 5 게시물 준비")
     log.append(f"할당량 사용(태평양 {day}): 검색 {quota['searches']}회, 단위 {quota['units']}")
     state["log"] = ([f"{iso(now)} " + " | ".join(log)] + state.get("log", []))[:72]
     state["last_run"] = iso(now)

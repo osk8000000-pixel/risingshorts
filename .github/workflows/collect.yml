@@ -14,6 +14,7 @@ on:
       - "site/**"
       - ".github/workflows/collect.yml"
       - "rerun.txt"  # 이 파일을 고치면 수동 재실행
+      - "social_force.txt"  # 오늘 날짜를 적으면 SNS 게시 즉시 1회
   workflow_dispatch:
     inputs:
       force_discover:
@@ -48,10 +49,14 @@ jobs:
             git show FETCH_HEAD:state.json.gz > state/state.json.gz
           fi
 
+      - name: Install image library (SNS card)
+        run: pip install --quiet "pillow==12.*"
+
       - name: Collect
         id: collect
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
         run: |
           python collector/collect.py --state state/state.json.gz --out site/data ${{ inputs.force_discover && '--force-discover' || '' }}
 
@@ -85,3 +90,8 @@ jobs:
         run: |
           npx --yes wrangler@3 pages project create risingshorts --production-branch=main 2>/dev/null || true
           npx --yes wrangler@3 pages deploy site --project-name=risingshorts --branch=main --commit-dirty=true
+
+      # 오늘의 TOP 5 게시물이 준비된 실행에서만, 배포가 끝난 뒤 Threads 에 게시
+      - name: Post to Threads
+        if: ${{ always() && steps.collect.outcome == 'success' && hashFiles('site/social/pending.json') != '' }}
+        run: python collector/social.py post site/social/pending.json
