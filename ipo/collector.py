@@ -111,8 +111,9 @@ def latest_group(groups, title):
     return [r for r in rows if r.get("rcept_no") == last]
 
 
-def build(key, today=None):
-    today = today or datetime.now(KST).date()
+def build(key, today=None, now=None):
+    now = now or datetime.now(KST)
+    today = today or now.date()
     filings = fetch_filings(key, today)
     by_corp = {}
     for f in filings:
@@ -177,7 +178,7 @@ def build(key, today=None):
                          "url": DART_VIEW + x["rcept_no"]} for x in fl],
             "source_rcept": g0.get("rcept_no"),
         }
-        item["status"] = status_of(item, today)
+        item["status"] = status_of(item, today, now)
         if item["refund"] and date.fromisoformat(item["refund"]) < today - timedelta(days=KEEP_DAYS_AFTER_REFUND):
             continue
         items.append(item)
@@ -185,7 +186,8 @@ def build(key, today=None):
     return items, errors, len(filings)
 
 
-def status_of(it, today):
+def status_of(it, today, now=None):
+    """청약은 보통 마감일 오후 4시에 끝나므로, 그 뒤에는 마감으로 본다."""
     if it["withdrawn"]:
         return "withdrawn"
     s, e, r = it["sub_start"], it["sub_end"], it["refund"]
@@ -194,7 +196,8 @@ def status_of(it, today):
     t = today.isoformat()
     if t < s:
         return "upcoming"
-    if s <= t <= (e or s):
+    closed = now is not None and t == (e or s) and now.hour >= 16
+    if s <= t <= (e or s) and not closed:
         return "subscribing"
     if r and t <= r:
         return "refund"
@@ -210,7 +213,7 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     now = datetime.now(KST)
     try:
-        items, errors, nfil = build(key, now.date())
+        items, errors, nfil = build(key, now.date(), now)
     except DartError as e:
         print(f"::error::{str(e).replace(key, '[KEY]')}")
         sys.exit(1)
