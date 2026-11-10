@@ -76,7 +76,7 @@ def make_card(now_items, soon, day, path, font_path):
     from PIL import Image, ImageDraw
     F = S._font
     W, H = 1080, 1350
-    green, ink, muted, bg = (11, 122, 85), (20, 25, 26), (88, 98, 100), (245, 247, 246)
+    green, ink, muted, bg = (217, 72, 15), (31, 26, 23), (111, 102, 96), (251, 248, 245)
     img = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W, 250], fill=green)
@@ -84,9 +84,9 @@ def make_card(now_items, soon, day, path, font_path):
     d.line([(70, 112), (180, 112)], fill="white", width=10)
     d.line([(100, 52), (100, 84)], fill="white", width=10)
     d.line([(150, 52), (150, 84)], fill="white", width=10)
-    d.text((215, 62), "공모주데이", font=F(font_path, 40, 800), fill=(205, 236, 222))
+    d.text((215, 62), "공모주데이", font=F(font_path, 40, 800), fill=(255, 222, 206))
     d.text((215, 110), "오늘의 공모주 청약", font=F(font_path, 64, 900), fill="white")
-    d.text((W - 70, 70), f"{day.month}월 {day.day}일 ({DOW[day.weekday()]})", font=F(font_path, 34, 700), fill=(205, 236, 222), anchor="ra")
+    d.text((W - 70, 70), f"{day.month}월 {day.day}일 ({DOW[day.weekday()]})", font=F(font_path, 34, 700), fill=(255, 222, 206), anchor="ra")
     f_name, f_meta, f_badge, f_sec = F(font_path, 46, 800), F(font_path, 30, 500), F(font_path, 28, 800), F(font_path, 34, 800)
     y = 290
     rows = [(i, True) for i in now_items[:4]] + [(i, False) for i in soon[: max(0, 5 - len(now_items[:4]))]]
@@ -100,7 +100,7 @@ def make_card(now_items, soon, day, path, font_path):
             y += 66
             shown_soon_head = True
         h = 170
-        d.rounded_rectangle([50, y, W - 50, y + h], radius=28, fill="white", outline=(232, 236, 235), width=2)
+        d.rounded_rectangle([50, y, W - 50, y + h], radius=28, fill="white", outline=(239, 231, 225), width=2)
         name = S._fit(d, it["name"], f_name, W - 50 - 90 - 260, lines=1)[0]
         d.text((90, y + 56), name, font=f_name, fill=ink, anchor="lm")
         meta = f"공모가 {won(it.get('price'))} · 최소 {won(int(it['price'] * 5) if it.get('price') else None)} · {lead(it)}"
@@ -109,10 +109,10 @@ def make_card(now_items, soon, day, path, font_path):
         if is_now:
             last = (it["sub_end"] or it["sub_start"]) == day.isoformat()
             badge = "오늘 마감" if last else f"{md(it['sub_end'])} 마감"
-            fill, color = ((11, 122, 85), "white") if last else ((228, 244, 236), (7, 92, 64))
+            fill, color = ((217, 72, 15), "white") if last else ((255, 232, 220), (156, 48, 8))
         else:
             badge = f"{md(it['sub_start'])} 시작"
-            fill, color = (238, 241, 240), muted
+            fill, color = (242, 238, 234), muted
         bw = d.textlength(badge, font=f_badge) + 36
         d.rounded_rectangle([W - 90 - bw, y + 34, W - 90, y + 78], radius=12, fill=fill)
         d.text((W - 90 - bw / 2, y + 56), badge, font=f_badge, fill=color, anchor="mm")

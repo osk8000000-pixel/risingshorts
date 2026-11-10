@@ -117,7 +117,7 @@ def josa(word, a, b):
 
 # ---------- 틀 ----------
 NAV = [("/", "home", "청약 일정"), ("/calendar", "calendar", "달력"), ("/broker", "broker", "증권사별"), ("/guide", "guide", "가이드")]
-ICON = ('<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#0B7A55"/>'
+ICON = ('<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="15" fill="#D9480F"/>'
         '<rect x="7" y="9" width="16" height="13" rx="2.5" fill="none" stroke="#fff" stroke-width="2.2"/>'
         '<path d="M7 13.5H23M11.5 7v4M18.5 7v4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'
         '<path d="M12 18l2 1.8 4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
@@ -143,14 +143,14 @@ def page(path, title, desc, body, nav="", noindex=False, extra=""):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0B7A55">
+<meta name="theme-color" content="#D9480F">
 <meta name="naver-site-verification" content="b2168079f28f3f433be932c7443688fa087ac304" />
 <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE}" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="/assets/style.css?v=2">
+<link rel="stylesheet" href="/assets/style.css?v=3">
 <script>if(location.hostname.endsWith('.pages.dev'))location.replace('{SITE}'+location.pathname+location.search);</script>
 {extra}</head>
 <body>
@@ -187,7 +187,7 @@ def table(items, cols=("date", "name", "price", "uw", "min", "status")):
         cell = {
             "date": f'<td class="c-date num">{frange(it["sub_start"], it["sub_end"])}</td>',
             "name": f'<td class="c-name"><a href="{ipo_url(it)}">{name_html(it)}</a></td>',
-            "price": f'<td class="c-price r num">{won(it.get("price"))}{"" if it.get("price_confirmed") or not it.get("price") else '<span class="sub">희망가</span>'}</td>',
+            "price": f'<td class="c-price r num">{won(it.get("price"))}{"" if it.get("price_confirmed") or not it.get("price") else '<span class="sub">확정 전</span>'}</td>',
             "uw": f'<td class="c-uw">{E(uw_text(it))}</td>',
             "min": f'<td class="c-min r num">{won(min_dep(it))}</td>',
             "status": f'<td class="c-status">{badge(it["status"])}</td>',
@@ -196,55 +196,124 @@ def table(items, cols=("date", "name", "price", "uw", "min", "status")):
     return f'<div class="tbl-wrap"><table class="tbl"><thead><tr>{th}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
 
 
-def card(it, hot=False):
-    return f"""<a class="card{' hot' if hot else ''}" href="{ipo_url(it)}">
-<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="name">{name_html(it)}</span>{badge(it['status'])}</div>
-<dl><dt>청약일</dt><dd class="num">{frange(it['sub_start'], it['sub_end'])}</dd>
-<dt>공모가</dt><dd class="num">{price_text(it)}</dd>
-<dt>최소 증거금</dt><dd class="num">{won(min_dep(it))} <span style="color:var(--muted);font-weight:400">(10주)</span></dd>
-<dt>주관사</dt><dd>{E(uw_text(it))}</dd>
-<dt>환불일</dt><dd class="num">{fd(it['refund'])}</dd></dl></a>"""
+def short_uw(it):
+    names = []
+    for u in it.get("underwriters") or []:
+        n = broker(u["name"])[0]
+        if n not in names:
+            names.append(n)
+    if not names:
+        return "미정"
+    return names[0] + (f" 외 {len(names) - 1}곳" if len(names) > 1 else "")
+
+
+def pend_badge(it):
+    if it.get("price_confirmed") or it.get("spac") or not it.get("price"):
+        return ""
+    return '<span class="pend">확정 전</span>'
+
+
+def card(it, today):
+    t = today.isoformat()
+    wk_end = (today + timedelta(days=6 - today.weekday())).isoformat()
+    st = it["status"]
+    if st == "subscribing":
+        bt, bc = ("오늘 마감" if it["sub_end"] == t else "청약 중"), "hot"
+    elif st == "upcoming":
+        dd = (d(it["sub_start"]) - today).days
+        bt, bc = f"D-{dd}", ("soon" if dd <= 3 else "far")
+    else:
+        bt, bc = STATUS.get(st, st), "far"
+    tags = " ".join(x for x in (
+        "now" if st == "subscribing" else "",
+        "week" if it["sub_start"] and it["sub_start"] <= wk_end else "",
+        "spac" if it.get("spac") else "",
+        "cheap" if (min_dep(it) or 10**12) <= 100000 else "") if x)
+    return f"""<a class="icard" href="{ipo_url(it)}" data-t="{tags}">
+<div class="row"><span class="b {bc}">{bt}</span><span class="dt num">{frange(it['sub_start'], it['sub_end'])}</span></div>
+<div class="nm">{name_html(it)}</div>
+<div class="big"><div><small>최소 증거금 (10주)</small><b class="num">{won(min_dep(it))}</b></div><div><small>공모가 {pend_badge(it)}</small><b class="num sm">{won(it.get('price'))}</b></div></div>
+<div class="ft"><span>{E(short_uw(it))}</span><span class="num">환불 {fd(it['refund'])}</span></div></a>"""
+
+
+def day_events(items, day):
+    s = day.isoformat()
+    ev = []
+    for it in items:
+        if it["status"] == "withdrawn" or not it["sub_start"]:
+            continue
+        e = it["sub_end"] or it["sub_start"]
+        if it["sub_start"] <= s <= e:
+            ev.append((0, "sub", it, "마감" if s == e and s != it["sub_start"] else "시작" if s == it["sub_start"] else "진행"))
+        if it.get("refund") == s:
+            ev.append((1, "ref", it, "환불"))
+    return sorted(ev, key=lambda x: x[0])
+
+
+def week_strip(items, today):
+    wk0 = today - timedelta(days=today.weekday())
+    out = ""
+    for k in range(5):
+        day = wk0 + timedelta(days=k)
+        chips = "".join(f'<a class="ch {c}" href="{ipo_url(it)}"><i>{lab}</i>{E(it["name"])}</a>' for _, c, it, lab in day_events(items, day)) \
+            or '<span class="none">일정 없음</span>'
+        cls = "today" if day == today else ("past" if day < today else "")
+        out += (f'<div class="dc {cls}"><div class="dh"><span>{DOW[k]}</span><b class="num">{day.month}.{day.day}</b>'
+                f'{"<em>오늘</em>" if day == today else ""}</div>{chips}</div>')
+    return out
 
 
 # ---------- 홈 ----------
 def render_home(items, today, updated):
     wk0 = today - timedelta(days=today.weekday())
     wk1 = wk0 + timedelta(days=6)
+    t = today.isoformat()
     live = [i for i in items if i["status"] != "withdrawn"]
     this_week = [i for i in live if i["sub_start"] and d(i["sub_start"]) <= wk1 and d(i["sub_end"] or i["sub_start"]) >= wk0]
     subs = [i for i in items if i["status"] == "subscribing"]
     up = [i for i in items if i["status"] == "upcoming"]
     ref = [i for i in items if i["status"] == "refund"]
-    done = sorted([i for i in items if i["status"] in ("done", "withdrawn")], key=lambda x: x["sub_start"] or "", reverse=True)[:12]
+    done = sorted([i for i in items if i["status"] in ("done", "withdrawn")], key=lambda x: x["sub_start"] or "", reverse=True)[:10]
+    in7 = len([i for i in up if (d(i["sub_start"]) - today).days <= 6])
+    refs = sorted(i["refund"] for i in live if i.get("refund") and i["refund"] >= t)
+    nxt_ref = fd(refs[0]) if refs else "-"
 
+    if subs:
+        h1 = f'오늘 청약할 수 있는 공모주<br><em>{len(subs)}개</em>가 있어요'
+        cheapest = min(subs, key=lambda x: min_dep(x) or 10**12)
+        sub = f"{E(cheapest['name'])} · {won(min_dep(cheapest))}부터 신청할 수 있어요."
+    elif up:
+        h1 = '오늘은 청약하는 공모주가<br><em>없어요</em>'
+        sub = f"다음 청약은 {E(up[0]['name'])}, {fd(up[0]['sub_start'])}부터예요."
+    else:
+        h1, sub = "예정된 청약이<br><em>아직 없어요</em>", "새 공시가 나오면 1시간 안에 반영돼요."
     if this_week:
         names = ", ".join(i["name"] for i in this_week[:6]) + (f" 외 {len(this_week) - 6}개" if len(this_week) > 6 else "")
-        summary = f"이번 주({wk0.month}.{wk0.day}~{wk1.month}.{wk1.day}) 청약하는 공모주는 <b>{len(this_week)}개</b>입니다: {E(names)}."
+        wk_line = f"이번 주({wk0.month}.{wk0.day}~{wk1.month}.{wk1.day}) 청약 공모주는 {len(this_week)}개입니다: {E(names)}."
     else:
-        summary = f"이번 주({wk0.month}.{wk0.day}~{wk1.month}.{wk1.day})에는 청약 일정이 없습니다."
-    if subs:
-        now_html = '<div class="cards">' + "".join(card(i, True) for i in subs) + "</div>"
-    else:
-        nxt = up[0] if up else None
-        msg = f'다음 청약은 <a href="{ipo_url(nxt)}">{E(nxt["name"])}</a>, {fd(nxt["sub_start"])}부터입니다.' if nxt else "예정된 청약이 아직 없습니다."
-        now_html = f'<div class="empty">오늘 청약할 수 있는 공모주는 없습니다. {msg}</div>'
-    week_cards = [i for i in this_week if i["status"] == "upcoming"]
+        wk_line = f"이번 주({wk0.month}.{wk0.day}~{wk1.month}.{wk1.day})에는 청약 일정이 없습니다."
+    cards = "".join(card(i, today) for i in subs + up)
     body = f"""
-<h1>공모주 청약 일정</h1>
-<p class="lead">{summary} 청약일, 공모가, 주관 증권사, 최소 증거금, 환불일을 DART 공시에서 모아 1시간마다 갱신합니다.</p>
-<p class="stamp">마지막 갱신 {E(updated)}</p>
-
-<section><h2>오늘 청약 가능</h2>{now_html}</section>
-{f'<section><h2>이번 주 청약 예정</h2><div class="cards">{"".join(card(i) for i in week_cards)}</div></section>' if week_cards else ''}
-<section><div class="sec-head"><h2>다가오는 청약 일정</h2><a href="/calendar">달력으로 보기 →</a></div>
-{table(up) if up else '<div class="empty">예정된 청약이 없습니다.</div>'}
-<p class="note">공모가 옆 '희망가'는 수요예측 전 증권신고서에 적힌 값으로, 확정 공모가 공시가 나오면 바뀔 수 있습니다. 최소 증거금은 10주·증거금률 50% 기준입니다.</p></section>
-{f'<section><h2>환불 예정</h2>{table(ref, ("date", "name", "price", "uw", "status"))}<p class="note">배정받지 못한 증거금은 각 종목의 환불일에 돌아옵니다: ' + ", ".join(E(i["name"]) + " " + fd(i["refund"]) for i in ref) + '.</p></section>' if ref else ''}
+<section class="hello">
+<div><p class="eyebrow">공모주 청약 일정 · {fd(t)}</p><h1>{h1}</h1><p class="sub">{sub}</p></div>
+<div class="sum"><div><b class="num">{len(subs)}</b><small>청약 중</small></div><div><b class="num">{in7}</b><small>7일 안 시작</small></div><div><b class="num">{nxt_ref}</b><small>다음 환불일</small></div></div>
+</section>
+<section><div class="sec-head"><h2>이번 주 일정</h2><a href="/calendar">한 달 달력 보기 →</a></div>
+<div class="week">{week_strip(items, today)}</div>
+<div class="legend"><span><i class="lg-sub"></i>청약 시작·마감</span><span><i class="lg-ref"></i>증거금 환불</span></div></section>
+<section><div class="sec-head"><h2>청약 일정</h2><span class="stamp">갱신 {E(updated)}</span></div>
+<div class="chips" role="group" aria-label="필터"><button class="chip on" data-f="">전체</button><button class="chip" data-f="now">청약 중</button><button class="chip" data-f="week">이번 주</button><button class="chip" data-f="nospac">스팩 빼고</button><button class="chip" data-f="cheap">10만 원 이하</button></div>
+{f'<div class="igrid" id="ig">{cards}</div><div class="empty" id="ig-empty" hidden>조건에 맞는 공모주가 없어요.</div>' if cards else '<div class="empty">예정된 청약이 없습니다.</div>'}
+<p class="note">{wk_line} 최소 증거금은 10주·증거금률 50% 기준이며, '확정 전'은 수요예측 뒤 공모가가 바뀔 수 있다는 뜻입니다.</p></section>
+{f'<section><h2>환불 예정</h2>{table(ref, ("date", "name", "price", "uw", "status"))}<p class="note">배정받지 못한 증거금은 환불일에 돌아옵니다: ' + ", ".join(E(i["name"]) + " " + fd(i["refund"]) for i in ref) + '.</p></section>' if ref else ''}
 <section><h2>최근 청약 마감</h2>{table(done, ("date", "name", "price", "uw", "status")) if done else '<div class="empty">최근 마감된 청약이 없습니다.</div>'}</section>
 <section><h2>처음이라면</h2><div class="links">{''.join(f'<a href="/guide/{g["slug"]}">{E(g["title"].split(":")[0])}<span>→</span></a>' for g in GUIDES[:4])}</div></section>
+<script>(function(){{var cs=document.querySelectorAll('.chip'),g=document.getElementById('ig'),em=document.getElementById('ig-empty');if(!g)return;
+cs.forEach(function(b){{b.addEventListener('click',function(){{cs.forEach(function(x){{x.classList.toggle('on',x===b)}});var f=b.dataset.f,n=0;
+g.querySelectorAll('.icard').forEach(function(c){{var t=c.dataset.t.split(' '),ok=!f||(f==='nospac'?t.indexOf('spac')<0:t.indexOf(f)>=0);c.hidden=!ok;if(ok)n++;}});em.hidden=n>0;}});}});}})();</script>
 """
     return page("/", f"{NAME} | 공모주 청약 일정·공모가·환불일 한눈에",
-                "이번 주 공모주 청약 일정을 한눈에. 청약일, 공모가, 주관 증권사, 최소 증거금, 환불일을 DART 공시에서 모아 1시간마다 갱신합니다.",
+                "오늘·이번 주 공모주 청약 일정을 한눈에. 청약일, 공모가, 주관 증권사, 최소 증거금, 환불일을 DART 공시에서 모아 1시간마다 갱신합니다.",
                 body, "home")
 
 
@@ -298,7 +367,7 @@ def render_ipo(it, today):
 <div class="facts">
 <div class="fact"><div class="k">청약일</div><div class="v num">{frange(it['sub_start'], it['sub_end'])}</div><div class="s">{it['sub_start'][:4] + '년' if it['sub_start'] else ''}</div></div>
 <div class="fact"><div class="k">공모가</div><div class="v num">{won(p)}</div><div class="s">{'확정' if it.get('price_confirmed') else '희망가 · 수요예측 뒤 확정'}</div></div>
-<div class="fact"><div class="k">최소 증거금</div><div class="v num">{won(mind)}</div><div class="s">10주 · 증거금률 50%</div></div>
+<div class="fact key"><div class="k">최소 증거금</div><div class="v num">{won(mind)}</div><div class="s">10주 · 증거금률 50%</div></div>
 <div class="fact"><div class="k">환불일</div><div class="v num">{fd(it['refund'])}</div><div class="s">미배정 증거금 반환</div></div>
 </div>
 <section class="two">
@@ -377,9 +446,9 @@ def render_calendar(items, y, m, months, today, path):
     n_sub = len({it["corp_code"] for it in items if it["sub_start"] and it["sub_start"][:7] == f"{y}-{m:02d}" and it["status"] != "withdrawn"})
     body = f"""
 <h1>{y}년 {m}월 공모주 청약 달력</h1>
-<p class="lead">{y}년 {m}월에 청약을 시작하는 공모주는 {n_sub}개입니다. 초록색은 청약일, 주황색은 증거금 환불일입니다. 종목을 누르면 공모가와 주관사를 볼 수 있습니다.</p>
+<p class="lead">{y}년 {m}월에 청약을 시작하는 공모주는 {n_sub}개입니다. 주황색은 청약일, 초록색은 증거금 환불일입니다. 종목을 누르면 공모가와 주관사를 볼 수 있습니다.</p>
 <div class="cal-nav">{link(prev, '‹')}<span class="ym num">{y}.{m:02d}</span>{link(nxt, '›')}</div>
-<div class="legend"><span><i style="background:var(--green-l)"></i>청약</span><span><i style="background:var(--amber-l)"></i>환불</span><span><i style="background:var(--red-l)"></i>철회</span></div>
+<div class="legend"><span><i class="lg-sub"></i>청약</span><span><i class="lg-ref"></i>환불</span><span><i class="lg-wd"></i>철회</span></div>
 <div class="cal">{cells}</div>
 <p class="note">환불일과 다른 종목의 청약일이 같은 날이면, 돌려받은 증거금으로 바로 다음 청약을 할 수 있습니다. <a href="/guide/deposit-refund">자세히 보기</a></p>
 """
