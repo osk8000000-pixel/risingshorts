@@ -150,7 +150,7 @@ def page(path, title, desc, body, nav="", noindex=False, extra=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE}" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="/assets/style.css?v=3">
+<link rel="stylesheet" href="/assets/style.css?v=4">
 <script>if(location.hostname.endsWith('.pages.dev'))location.replace('{SITE}'+location.pathname+location.search);</script>
 {extra}</head>
 <body>

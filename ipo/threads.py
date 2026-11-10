@@ -76,7 +76,7 @@ def make_card(now_items, soon, day, path, font_path):
     from PIL import Image, ImageDraw
     F = S._font
     W, H = 1080, 1350
-    green, ink, muted, bg = (217, 72, 15), (31, 26, 23), (111, 102, 96), (251, 248, 245)
+    green, ink, muted, bg = (217, 72, 15), (31, 26, 23), (100, 106, 114), (243, 244, 246)
     img = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W, 250], fill=green)
@@ -100,7 +100,7 @@ def make_card(now_items, soon, day, path, font_path):
             y += 66
             shown_soon_head = True
         h = 170
-        d.rounded_rectangle([50, y, W - 50, y + h], radius=28, fill="white", outline=(239, 231, 225), width=2)
+        d.rounded_rectangle([50, y, W - 50, y + h], radius=28, fill="white", outline=(230, 232, 235), width=2)
         name = S._fit(d, it["name"], f_name, W - 50 - 90 - 260, lines=1)[0]
         d.text((90, y + 56), name, font=f_name, fill=ink, anchor="lm")
         meta = f"공모가 {won(it.get('price'))} · 최소 {won(int(it['price'] * 5) if it.get('price') else None)} · {lead(it)}"
@@ -112,7 +112,7 @@ def make_card(now_items, soon, day, path, font_path):
             fill, color = ((217, 72, 15), "white") if last else ((255, 232, 220), (156, 48, 8))
         else:
             badge = f"{md(it['sub_start'])} 시작"
-            fill, color = (242, 238, 234), muted
+            fill, color = (238, 240, 242), muted
         bw = d.textlength(badge, font=f_badge) + 36
         d.rounded_rectangle([W - 90 - bw, y + 34, W - 90, y + 78], radius=12, fill=fill)
         d.text((W - 90 - bw / 2, y + 56), badge, font=f_badge, fill=color, anchor="mm")

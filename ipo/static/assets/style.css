@@ -1,10 +1,10 @@
-/* 공모주데이 스타일 v3 — 따뜻한 톤, 큰 카드형 */
+/* 공모주데이 스타일 v4 — 회색 배경, 주황 포인트, 큰 카드형 */
 :root{
-  --bg:#FBF8F5; --card:#FFFFFF; --ink:#1F1A17; --ink2:#3A332E; --muted:#6F6660; --faint:#B3A9A2;
-  --line:#EFE7E1; --line2:#E2D8D0;
+  --bg:#F3F4F6; --card:#FFFFFF; --ink:#191C20; --ink2:#33383E; --muted:#646A72; --faint:#A9AEB5;
+  --line:#E6E8EB; --line2:#D9DCE0;
   --or:#D9480F; --or-d:#A8360A; --or-l:#FFE8DC; --or-t:#9C3008;
   --gr:#2F9E44; --gr-d:#1F7A33; --gr-l:#E6F4EA;
-  --am:#B35C00; --am-l:#FFF0D6; --red:#C92A2A; --red-l:#FFE3E3; --gray-l:#F2EEEA; --blue:#1C55C9; --blue-l:#E7EEFB;
+  --am:#B35C00; --am-l:#FFF0D6; --red:#C92A2A; --red-l:#FFE3E3; --gray-l:#EEF0F2; --blue:#1C55C9; --blue-l:#E7EEFB;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -16,7 +16,7 @@ a{color:var(--or)}a:hover{color:var(--or-d)}
 @media (max-width:640px){.wrap{padding:0 16px}}
 
 /* 머리 */
-.top{background:rgba(251,248,245,.94);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10;border-bottom:1px solid transparent}
+.top{background:rgba(243,244,246,.94);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10;border-bottom:1px solid transparent}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;height:64px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
 .logo span{font-size:21px;font-weight:900;letter-spacing:-.02em}
@@ -109,7 +109,7 @@ a.ch:hover{filter:brightness(.96)}
 /* 표 */
 .tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
 table.tbl{width:100%;border-collapse:collapse;font-size:15px}
-.tbl th{text-align:left;font-size:13px;font-weight:700;color:var(--muted);background:#FDFBF9;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th{text-align:left;font-size:13px;font-weight:700;color:var(--muted);background:#FAFAFB;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
 .tbl td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:0}
 .tbl td a{color:var(--ink);font-weight:700;text-decoration:none}.tbl td a:hover{color:var(--or)}
@@ -179,10 +179,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:15px}
 .cal-nav span.off{color:var(--faint)}
 .cal-nav .ym{font-size:20px;font-weight:900;min-width:120px;text-align:center}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;margin-top:14px}
-.cal .dow{font-size:13px;font-weight:700;color:var(--muted);text-align:center;padding:10px 0;background:#FDFBF9;border-bottom:1px solid var(--line)}
+.cal .dow{font-size:13px;font-weight:700;color:var(--muted);text-align:center;padding:10px 0;background:#FAFAFB;border-bottom:1px solid var(--line)}
 .cal .day{min-height:112px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;font-size:12.5px;display:flex;flex-direction:column;gap:3px}
 .cal .day:nth-child(7n){border-right:0}
-.cal .day.out{background:#FDFBF9;color:var(--faint)}
+.cal .day.out{background:#FAFAFB;color:var(--faint)}
 .cal .day .d{font-weight:700;font-family:Inter,sans-serif;font-size:13px}
 .cal .day.today .d{background:var(--or);color:#fff;border-radius:6px;padding:0 6px;align-self:flex-start}
 .cal .ev{display:block;border-radius:6px;padding:2px 5px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
@@ -204,7 +204,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:15px}
 .links a span{color:var(--or);font-weight:700;font-size:14px}
 .links a:hover{border-color:var(--or)}
 
-footer{border-top:1px solid var(--line);background:#F6F1EC;padding:28px 0 40px;font-size:14px;color:var(--muted)}
+footer{border-top:1px solid var(--line);background:#ECEEF1;padding:28px 0 40px;font-size:14px;color:var(--muted)}
 footer nav{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px}
 footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--ink)}
 footer p{margin:6px 0}
