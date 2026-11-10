@@ -389,6 +389,9 @@ def report_html(data, current=True, archive=()):
     parts = [f'<section class="head"><div><p class="stamp">{stamp}</p><h1>{h1}</h1>'
              '<p class="lead">최근 7일 동안 올라온 쇼츠 가운데 국내와 해외에서 무엇이 가장 크게 떴는지, '
              '라이징쇼츠가 1시간마다 모은 데이터로 자동 정리한 리포트예요.</p></div></section>']
+    if data.get("expired"):
+        parts.append('<p class="help">30일이 지난 리포트라 YouTube API 정책에 따라 개별 영상 정보(제목·채널·조회수)는 지우고 '
+                     '카테고리별 집계 숫자만 남겼어요.</p>')
     for r in ("kr", "us"):
         reg = data["regions"].get(r) or {"top": [], "stats": []}
         top, stats = reg["top"], reg["stats"]
@@ -405,21 +408,48 @@ def report_html(data, current=True, archive=()):
                        for sl, m, d in stats)
         parts.append(f'<section class="section"><h2>{RNAME[r]}{" (영어권)" if r == "us" else ""}</h2>'
                      + "".join(f'<p class="lead" style="color:var(--ink2)">{l}</p>' for l in lines)
-                     + f'<h3 style="margin:10px 0 0;font-size:17px">가장 많이 본 쇼츠 TOP 10</h3><div class="grid5">'
-                     + "".join(card(v, i + 1) for i, v in enumerate(top)) + "</div>"
+                     + ((f'<h3 style="margin:10px 0 0;font-size:17px">가장 많이 본 쇼츠 TOP 10</h3><div class="grid5">'
+                         + "".join(card(v, i + 1) for i, v in enumerate(top)) + "</div>") if top else "")
                      + '<h3 style="margin:18px 0 0;font-size:17px">카테고리별 속도와 길이</h3>'
                      + '<div class="prose" style="max-width:none;padding:8px 18px"><table class="tbl"><thead><tr><th>카테고리</th><th>시간당 조회 (상위 20개 중앙값)</th><th>영상 길이 (중앙값)</th></tr></thead><tbody>'
                      + rows + "</tbody></table></div></section>")
     if archive:
         parts.append('<section class="section"><h2 style="font-size:19px">지난 리포트</h2><ul class="links">'
                      + "".join(f'<li><a href="/report/{k}">{lab}</a></li>' for k, lab in archive) + "</ul></section>")
-    parts.append('<p class="help">숫자는 유튜브 공개 데이터로 계산한 추정치예요. '
+    parts.append('<p class="help">시간당 조회·중앙값 같은 숫자는 YouTube API 데이터를 바탕으로 라이징쇼츠가 자체 계산한 추정치이며, YouTube가 제공하는 수치가 아니에요. '
                  '<a href="/guide/how-to-read-rankings">지표 읽는 법 보기</a></p>')
     return "".join(parts)
 
 
+API_DATA_DAYS = 30  # YouTube API 개발자 정책: 저장한 API 데이터는 30일 안에 새로 고치거나 지운다
+
+
+def expire_report_data(archive_data, now_iso, days=API_DATA_DAYS):
+    """마지막 집계가 30일 넘게 지난 리포트에서 개별 영상 정보(제목·채널·조회수 등)를 지운다.
+    카테고리별 중앙값 같은 집계 숫자만 남긴다. 지운 리포트의 주차 키 목록을 돌려준다."""
+    now = datetime.fromisoformat(now_iso.replace("Z", "+00:00"))
+    expired = []
+    for k, d in archive_data.items():
+        try:
+            last = datetime.fromisoformat(d["updated"].replace("Z", "+00:00"))
+        except (KeyError, ValueError):
+            continue
+        if now - last <= timedelta(days=days):
+            continue
+        changed = False
+        for reg in (d.get("regions") or {}).values():
+            if reg.get("top"):
+                reg["top"] = []
+                changed = True
+        if changed or not d.get("expired"):
+            d["expired"] = True
+            expired.append(k)
+    return expired
+
+
 def render_reports(site_dir, tpl, current, archive_data):
     """/report (이번 주) 와 /report/2026-W45 같은 지난 주 리포트들."""
+    expire_report_data(archive_data, current["updated"])
     past = sorted((d for k, d in archive_data.items() if k != current["key"]), key=lambda d: d["key"], reverse=True)
 
     def label(d):
