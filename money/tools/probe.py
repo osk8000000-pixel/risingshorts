@@ -1,29 +1,29 @@
-"""돈챙김 API 탐색: 응답 구조만 출력(키는 출력하지 않음)."""
-import json, os, urllib.parse, urllib.request
-
-def get(url):
-    try:
-        with urllib.request.urlopen(url, timeout=30) as r:
-            return r.status, r.read().decode("utf-8", "replace")
-    except Exception as e:
-        return getattr(e, "code", 0), str(getattr(e, "read", lambda: b"")() or e)[:400]
-
-def show(name, url, key):
-    st, body = get(url)
-    body = body.replace(key, "[KEY]") if key else body
-    print(f"=== {name}: HTTP {st}")
-    try:
-        d = json.loads(body)
-        print(json.dumps(d, ensure_ascii=False)[:2500])
-    except Exception:
-        print(body[:800])
-
-fk = os.environ.get("FINLIFE_API_KEY", "").strip()
-for kind in ("depositProductsSearch", "savingProductsSearch"):
-    show(kind, f"https://finlife.fss.or.kr/finlifeapi/{kind}.json?auth={fk}&topFinGrpNo=020000&pageNo=1", fk)
+"""돈챙김 API 탐색 2: 필드 목록, 신청기한 표본, 분야 분포."""
+import collections, json, os, urllib.parse, urllib.request
 
 dk = os.environ.get("DATA_GO_KR_KEY", "").strip()
 q = urllib.parse.quote(dk, safe="")
-show("gov24 serviceList", f"https://api.odcloud.kr/api/gov24/v3/serviceList?page=1&perPage=3&serviceKey={q}", dk)
-show("gov24 serviceDetail", f"https://api.odcloud.kr/api/gov24/v3/serviceDetail?page=1&perPage=2&serviceKey={q}", dk)
-show("gov24 supportConditions", f"https://api.odcloud.kr/api/gov24/v3/supportConditions?page=1&perPage=1&serviceKey={q}", dk)
+def get(ep, page, per):
+    url = f"https://api.odcloud.kr/api/gov24/v3/{ep}?page={page}&perPage={per}&serviceKey={q}"
+    with urllib.request.urlopen(url, timeout=60) as r:
+        return json.loads(r.read().decode())
+d = get("serviceList", 1, 1000)
+print("total", d.get("totalCount"))
+rows = d["data"]
+print("LIST KEYS", list(rows[0].keys()))
+c = collections.Counter(r.get("서비스분야") for r in rows); print("분야", c.most_common())
+c = collections.Counter(r.get("사용자구분") for r in rows); print("사용자", c.most_common())
+c = collections.Counter(r.get("지원유형") for r in rows); print("지원유형", c.most_common(12))
+c = collections.Counter(r.get("소관기관유형") for r in rows); print("기관유형", c.most_common())
+dl = collections.Counter(r.get("신청기한") for r in rows); print("신청기한 top", dl.most_common(25))
+rows.sort(key=lambda r: -(r.get("조회수") or 0))
+for r in rows[:15]:
+    print("TOP", r.get("조회수"), r.get("서비스명"), "|", r.get("소관기관명"), "|", (r.get("신청기한") or "")[:40])
+dd = get("serviceDetail", 1, 1)["data"][0]; print("DETAIL KEYS", list(dd.keys()))
+try:
+    with urllib.request.urlopen("https://infuser.odcloud.kr/oas/docs?namespace=15113968/v1", timeout=30) as r:
+        s = r.read().decode()
+    import re
+    i = s.find("JA0101"); print("DOC", s[i-200:i+6000].replace(dk, "")[:6000])
+except Exception as e:
+    print("doc fail", e)
