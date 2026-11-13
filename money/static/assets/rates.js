@@ -5,6 +5,7 @@
     if (!cache[kind]) cache[kind] = fetch("/api/rates?kind=" + kind).then(function (r) { return r.json(); });
     return cache[kind];
   }
+  function nm(s) { return String(s || "").replace(/\s*\n\s*/g, " ").replace(/^주식회사\s*|\s*주식회사$/g, "").trim(); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function pick(items, term, group) {
     var rows = [];
@@ -33,7 +34,7 @@
       rows.forEach(function (x, i) {
         var p = x.p, o = x.o;
         h += '<div class="rate-row"><span class="rk">' + (i + 1) + '</span>' +
-          '<div><div class="bk">' + esc(p.bank) + (p.g === "savings" ? ' · 저축은행' : '') + (o.rsrv ? ' · ' + esc(o.rsrv) : '') + '</div><div class="pn">' + esc(p.name) + '</div></div>' +
+          '<div><div class="bk">' + esc(nm(p.bank)) + (p.g === "savings" ? ' · 저축은행' : '') + (o.rsrv ? ' · ' + esc(o.rsrv) : '') + '</div><div class="pn">' + esc(nm(p.name)) + '</div></div>' +
           '<div class="rt"><b>' + o.r2.toFixed(2) + '%</b><small>우대 포함</small></div>' +
           '<div class="rt base"><b>' + o.r.toFixed(2) + '%</b><small>' + esc(o.type || "기본") + '</small></div>' +
           '<details><summary>가입 조건·우대 조건 보기</summary><p><b>가입 방법</b> ' + esc(p.join) + '\n<b>가입 대상</b> ' + esc(p.member) +
@@ -52,8 +53,8 @@
     load(kind).then(function (d) {
       var rows = pick(d.items, 12, "all").slice(0, 3);
       el.innerHTML = rows.map(function (x, i) {
-        return '<a href="/rates#' + kind + '"><div class="k">' + label + ' ' + (i + 1) + '위 · 12개월</div><div class="n">' + esc(x.p.bank) + ' ' + esc(x.p.name) +
-          '</div><div class="v">' + x.o.r2.toFixed(2) + '%</div><div class="k">기본 ' + x.o.r.toFixed(2) + '%</div></a>';
+        return '<a class="rc' + (kind === "saving" ? " s" : "") + '" href="/rates#' + kind + '"><div class="k">' + label + ' ' + (i + 1) + '위 · ' + esc(nm(x.p.bank)) + '</div><div class="n">' + esc(nm(x.p.name)) +
+          '</div><div class="v">' + x.o.r2.toFixed(2) + '<em>%</em></div><div class="m">기본 ' + x.o.r.toFixed(2) + '% · 12개월</div></a>';
       }).join("");
     }).catch(function () { el.innerHTML = '<div class="empty">금리 정보를 잠시 불러오지 못했어요.</div>'; });
   }

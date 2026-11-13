@@ -25,7 +25,9 @@ REGIONS = [("서울", "seoul"), ("경기", "gyeonggi"), ("인천", "incheon"), (
            ("충북", "chungbuk"), ("충남", "chungnam"), ("전북", "jeonbuk"), ("경북", "gyeongbuk"), ("경남", "gyeongnam"),
            ("제주", "jeju")]
 TNAME = {s: n for s, n, _ in TARGETS}
-ICON = ('<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="15" fill="#0C9A6A"/>'
+EMOJI = {"youth": "🎓", "senior": "👵", "baby": "👶", "job": "💼", "house": "🏠", "lowincome": "🤝", "disabled": "♿",
+         "business": "🏪", "farmer": "🌾", "single": "👨‍👧"}
+ICON = ('<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="15" fill="#0C9A6A"/><path d="M26 22a13 13 0 0 1-18 5 13 13 0 0 0 18-5z" fill="#FFD43B"/>'
         '<path d="M9 12.5c0-2 2.7-3.5 6-3.5s6 1.5 6 3.5-2.7 3.5-6 3.5-6 1.5-6 3.5 2.7 3.5 6 3.5 6-1.5 6-3.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'
         '<path d="M15 6.5v17" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>')
 NAV = [("/", "home", "홈"), ("/support", "support", "지원금"), ("/deadline", "deadline", "마감 임박"),
@@ -78,7 +80,7 @@ def page(path, title, desc, body, nav="", noindex=False, scripts=""):
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE}" crossorigin="anonymous"></script>
 <script>if(location.hostname.endsWith('.pages.dev'))location.replace('{SITE}'+location.pathname+location.search+location.hash);</script>
-<link rel="stylesheet" href="/assets/style.css?v=1">
+<link rel="stylesheet" href="/assets/style.css?v=2">
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -154,31 +156,40 @@ def links_regions(items):
 
 
 # ---------- 페이지 ----------
+def tiles_targets(items):
+    cnt = {k: 0 for k, _, _ in TARGETS}
+    for it in items:
+        for x in it["targets"]:
+            cnt[x] += 1
+    return '<div class="tiles">' + "".join(
+        f'<a class="tile" href="/target/{k}"><span class="em">{EMOJI[k]}</span><b>{E(n)}</b><small>{cnt[k]:,}개</small></a>' for k, n, _ in TARGETS) + "</div>"
+
+
 def render_home(items, today, updated):
     t = today.isoformat()
-    open_ = sorted([i for i in items if i["open_now"] and i["page"]], key=lambda x: (x["dl_end"], -x["views"]))
-    month_end = [i for i in open_ if i["dl_end"][:7] == t[:7]]
-    popular = [i for i in items if i["region"] == "전국" and i["page"]][:12]
+    open_ = sorted([i for i in items if i["open_now"] and i["page"] and i["dl_end"] >= t], key=lambda x: (x["dl_end"], -x["views"]))
+    week = [i for i in open_ if (d(i["dl_end"]) - today).days <= 7]
+    popular = [i for i in items if i["region"] == "전국" and i["page"]][:9]
     first = open_[0] if open_ else None
     sub = (f"마감이 가장 가까운 지원금은 <a href=\"{s_url(first)}\">{E(first['name'])}</a>, {fd(first['dl_end'])}까지예요."
-           if first else "지금 신청할 수 있는 지원금을 모았어요.")
+           if first else "나에게 맞는 대상을 골라 바로 찾아보세요.")
     body = f"""
-<section class="hello">
-<div><p class="eyebrow">지원금 · 예적금 금리 · {fd(t)}</p><h1>지금 신청할 수 있는 지원금<br><em>{len(open_)}개</em>를 찾았어요</h1><p class="sub">{sub}</p></div>
-<div class="sum"><div><b class="num">{len(open_)}</b><small>접수 중</small></div><div><b class="num">{len(month_end)}</b><small>이번 달 마감</small></div><div><b class="num" id="sum-rate">-</b><small>최고 예금금리</small></div></div>
+<section class="heroc">
+<div><p class="eyebrow">지원금 · 예적금 금리 · {fd(t)}</p><h1>놓치면 아까운 지원금<br><em>{len(open_)}개</em>가 지금 접수 중!</h1><p class="sub">{sub}</p></div>
+<div class="coins"><div><b class="num">{len(open_)}</b><small>접수 중</small></div><div><b class="num">{len(week)}</b><small>7일 안 마감</small></div><div><b class="num" id="sum-rate">-</b><small>최고 예금금리</small></div></div>
 </section>
-<section><div class="sec-head"><h2>마감 임박 지원금</h2><a href="/deadline">전체 보기 →</a></div>{grid(open_[:9], today)}</section>
-<section><div class="sec-head"><h2>오늘의 최고 금리</h2><a href="/rates">금리 비교 전체 →</a></div>
-<div class="mini" id="mini-deposit"><div class="skel" style="border-radius:20px"></div><div class="skel" style="border-radius:20px"></div><div class="skel" style="border-radius:20px"></div></div>
-<div class="mini" id="mini-saving" style="margin-top:12px"></div>
-<p class="src">금융감독원 금융상품통합비교공시 금융회사 상품정보를 방문할 때마다 바로 받아 보여 줍니다. 우대 조건을 모두 채웠을 때의 금리예요.</p></section>
-<section><h2>누구를 위한 지원금?</h2>{links_targets(items)}</section>
-<section><div class="sec-head"><h2>많이 찾는 전국 지원금</h2><a href="/support">인기 순위 →</a></div>{grid(popular, today)}</section>
-<section><h2>우리 지역 지원금</h2>{links_regions(items)}</section>
-<section><h2>알아두면 돈이 되는 글</h2><div class="links">{''.join(f'<a href="/guide/{g["slug"]}">{E(g["title"])}<span>→</span></a>' for g in GUIDES[:4])}</div>
+<section><h2>누가 받을 수 있을까요?</h2>{tiles_targets(items)}</section>
+<section><div class="sec-head"><h2><span class="ic">⏰</span>마감 임박 지원금</h2><a href="/deadline">전체 보기 →</a></div>{grid(open_[:9], today)}</section>
+<section><div class="sec-head"><h2><span class="ic">💰</span>오늘의 최고 금리</h2><a href="/rates">금리 비교 전체 →</a></div>
+<div class="rcards" id="mini-deposit"><div class="skel" style="border-radius:22px;height:150px"></div><div class="skel" style="border-radius:22px;height:150px"></div><div class="skel" style="border-radius:22px;height:150px"></div></div>
+<div class="rcards" id="mini-saving" style="margin-top:14px"></div>
+<p class="src">금융감독원 금융상품통합비교공시 금융회사 상품정보를 방문할 때마다 바로 받아 보여 줍니다. 큰 숫자는 우대 조건을 모두 채웠을 때의 금리예요.</p></section>
+<section><div class="sec-head"><h2><span class="ic">🔥</span>많이 찾는 전국 지원금</h2><a href="/support">인기 순위 →</a></div>{grid(popular, today)}</section>
+<section><h2><span class="ic">📍</span>우리 지역 지원금</h2>{links_regions(items)}</section>
+<section><h2><span class="ic">📘</span>알아두면 돈이 되는 글</h2><div class="links">{''.join(f'<a href="/guide/{g["slug"]}">{E(g["title"])}<span>→</span></a>' for g in GUIDES[:4])}</div>
 <p class="note">지원금 정보 갱신 {E(updated)} · 행정안전부 공공서비스(혜택) 정보 기준</p></section>
 """
-    js = ('<script src="/assets/rates.js?v=1" defer></script>'
+    js = ('<script src="/assets/rates.js?v=2" defer></script>'
           '<script>addEventListener("load",function(){fetch("/api/rates?kind=deposit").then(r=>r.json()).then(function(d){var m=0;(d.items||[]).forEach(function(p){p.opts.forEach(function(o){if(o.t===12)m=Math.max(m,Number(o.r2||o.r||0))})});if(m)document.getElementById("sum-rate").textContent=m.toFixed(2)+"%"}).catch(function(){})});</script>')
     return page("/", f"{NAME} | 지금 받을 수 있는 정부 지원금·예적금 최고 금리",
                 f"지금 신청할 수 있는 정부·지자체 지원금 {len(open_)}개와 마감일, 은행·저축은행 예적금 최고 금리를 한곳에서. 받을 돈과 불릴 돈을 챙기세요.",
@@ -267,7 +278,7 @@ def render_support(items, today):
         fields[i["field"]] = fields.get(i["field"], 0) + 1
     body = f"""<h1>인기 지원금 순위</h1>
 <p class="lead">정부·지자체 지원 서비스 {len(items):,}개 가운데 많이 찾는 순서로 120개를 골랐어요. 나에게 맞는 지원금은 대상별·지역별 목록에서 더 빨리 찾을 수 있어요.</p>
-<section><h2>대상별</h2>{links_targets(items)}</section>
+<section><h2>대상별</h2>{tiles_targets(items)}</section>
 <section><h2>지역별</h2>{links_regions(items)}</section>
 <section><h2>많이 찾는 지원금</h2>{grid(top, today)}</section>
 <p class="note">분야별 개수: {E(', '.join(f'{k} {v:,}' for k, v in sorted(fields.items(), key=lambda kv: -kv[1])))}</p>"""
@@ -300,7 +311,7 @@ def render_rates():
 <p>최고 금리와 기본 금리의 차이가 큰 상품은 우대 조건(급여 이체, 카드 실적 등)을 채워야 높은 금리를 받을 수 있어요. 각 상품의 '가입 조건·우대 조건 보기'를 눌러 내가 채울 수 있는 조건인지 확인하세요. 저축은행 예금도 1인당 1억 원까지 예금자보호를 받아요. <a href="/guide/deposit-protection">예금자보호 자세히</a></p></section>
 """
     return page("/rates", "예금·적금 최고 금리 비교 (은행·저축은행)", "은행·저축은행 정기예금과 적금 금리를 금융감독원 공시로 바로 비교. 6·12·24·36개월 기간별 최고 금리 순위와 세후 이자 계산기.",
-                body, "rates", scripts='<script src="/assets/rates.js?v=1" defer></script>')
+                body, "rates", scripts='<script src="/assets/rates.js?v=2" defer></script>')
 
 
 def render_guides():
