@@ -1,0 +1,32 @@
+name: money
+on:
+  schedule:
+    - cron: "43 */6 * * *"
+  push:
+    branches: [main]
+    paths: [money/**, .github/workflows/money.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: money
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Collect government support services
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: python money/collector.py money/data
+      - name: Save data to money-data branch
+        run: |
+          cd money/data
+          git init -q -b money-data
+          git config user.name "money-bot"; git config user.email "money-bot@users.noreply.github.com"
+          git add -A && git commit -qm "data $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" money-data
