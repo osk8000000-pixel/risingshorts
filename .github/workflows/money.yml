@@ -23,6 +23,18 @@ jobs:
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: python money/collector.py money/data
+      - name: Build site
+        run: python money/render.py money/data/services.json money/out
+      - name: Deploy to Cloudflare Pages (with live-rate function)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FINLIFE_API_KEY: ${{ secrets.FINLIFE_API_KEY }}
+        working-directory: money
+        run: |
+          npx --yes wrangler@3 pages project create donchaengim --production-branch=main 2>/dev/null || true
+          printf '%s' "$FINLIFE_API_KEY" | npx --yes wrangler@3 pages secret put FINLIFE_API_KEY --project-name donchaengim >/dev/null
+          npx --yes wrangler@3 pages deploy out --project-name=donchaengim --branch=main --commit-dirty=true
       - name: Save data to money-data branch
         run: |
           cd money/data
