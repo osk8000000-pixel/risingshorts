@@ -1,0 +1,14 @@
+{
+ "updated": "2026-11-14T22:06+09:00",
+ "filings_seen": 11714,
+ "items": 25,
+ "by_status": {
+  "upcoming": 17,
+  "subscribing": 0,
+  "refund": 1,
+  "done": 4,
+  "withdrawn": 3,
+  "unknown": 0
+ },
+ "errors": []
+}

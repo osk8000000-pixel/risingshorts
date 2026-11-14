@@ -1,0 +1,1248 @@
+{
+ "updated": "2026-11-14T22:06+09:00",
+ "items": [
+  {
+   "corp_code": "00960234",
+   "name": "영광와이케이엠씨",
+   "spac": false,
+   "sub_start": "2026-11-04",
+   "sub_end": "2026-11-05",
+   "refund": "2026-11-09",
+   "price": 9400,
+   "price_confirmed": true,
+   "shares": 2300000,
+   "amount": 21620000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "대신증권",
+     "role": "대표",
+     "shares": 2300000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": true,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261008",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008000649"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261030",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030000616"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000003"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000181"
+    },
+    {
+     "kind": "final",
+     "title": "[발행조건확정]증권신고서(지분증권)",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000312"
+    },
+    {
+     "kind": "result",
+     "title": "증권발행실적보고서",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000183"
+    }
+   ],
+   "source_rcept": "20261030000616",
+   "status": "done"
+  },
+  {
+   "corp_code": "02038432",
+   "name": "SimwonAmericaCorp.",
+   "spac": false,
+   "sub_start": "2026-11-05",
+   "sub_end": "2026-11-05",
+   "refund": "2026-11-09",
+   "price": 26784,
+   "price_confirmed": false,
+   "shares": 2500000,
+   "amount": 66960000000,
+   "face": null,
+   "method": "일반공모",
+   "underwriters": [],
+   "withdrawn": true,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261012",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012000149"
+    },
+    {
+     "kind": "withdraw",
+     "title": "철회신고서",
+     "date": "20261030",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030000200"
+    }
+   ],
+   "source_rcept": "20261012000149",
+   "status": "withdrawn"
+  },
+  {
+   "corp_code": "01658035",
+   "name": "옵토닉스",
+   "spac": false,
+   "sub_start": "2026-11-05",
+   "sub_end": "2026-11-06",
+   "refund": "2026-11-10",
+   "price": 10000,
+   "price_confirmed": true,
+   "shares": 2200000,
+   "amount": 22000000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "한국투자증권",
+     "role": "대표",
+     "shares": 2200000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": true,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20260929",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260929000347"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261021",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021000210"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261023",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023000210"
+    },
+    {
+     "kind": "final",
+     "title": "[발행조건확정]증권신고서(지분증권)",
+     "date": "20261029",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029000504"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261029",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029000524"
+    },
+    {
+     "kind": "result",
+     "title": "증권발행실적보고서",
+     "date": "20261110",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110000258"
+    }
+   ],
+   "source_rcept": "20261021000210",
+   "status": "done"
+  },
+  {
+   "corp_code": "01797635",
+   "name": "에이엘로봇",
+   "spac": false,
+   "sub_start": "2026-11-06",
+   "sub_end": "2026-11-09",
+   "refund": "2026-11-11",
+   "price": 15700,
+   "price_confirmed": true,
+   "shares": 2400000,
+   "amount": 37680000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "대신증권",
+     "role": "대표",
+     "shares": 2400000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": true,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20260921",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260921000209"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261012",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012000490"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261030",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030000140"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000055"
+    },
+    {
+     "kind": "final",
+     "title": "[발행조건확정]증권신고서(지분증권)",
+     "date": "20261104",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104000314"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261104",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104000315"
+    },
+    {
+     "kind": "result",
+     "title": "증권발행실적보고서",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000281"
+    }
+   ],
+   "source_rcept": "20261030000140",
+   "status": "done"
+  },
+  {
+   "corp_code": "01025617",
+   "name": "하나에어로다이내믹스",
+   "spac": false,
+   "sub_start": "2026-11-10",
+   "sub_end": "2026-11-11",
+   "refund": "2026-11-13",
+   "price": 4700,
+   "price_confirmed": true,
+   "shares": 4400000,
+   "amount": 20680000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "아이비케이투자증권",
+     "role": "대표",
+     "shares": 4400000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": true,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20260921",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260921000405"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261016",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016000159"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261019",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261019000085"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000048"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000050"
+    },
+    {
+     "kind": "final",
+     "title": "[발행조건확정]증권신고서(지분증권)",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000163"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000166"
+    },
+    {
+     "kind": "result",
+     "title": "증권발행실적보고서",
+     "date": "20261113",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113000458"
+    }
+   ],
+   "source_rcept": "20261109000048",
+   "status": "done"
+  },
+  {
+   "corp_code": "00618173",
+   "name": "씨앤엠",
+   "spac": false,
+   "sub_start": "2026-11-12",
+   "sub_end": "2026-11-13",
+   "refund": "2026-11-17",
+   "price": 10000,
+   "price_confirmed": true,
+   "shares": 2950000,
+   "amount": 29500000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "한국투자증권",
+     "role": "대표",
+     "shares": 2950000
+    }
+   ],
+   "withdrawn": true,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261016",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016000412"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000363"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000012"
+    },
+    {
+     "kind": "withdraw",
+     "title": "철회신고서",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000246"
+    }
+   ],
+   "source_rcept": "20261103000363",
+   "status": "withdrawn"
+  },
+  {
+   "corp_code": "01705740",
+   "name": "엠비디",
+   "spac": false,
+   "sub_start": "2026-11-12",
+   "sub_end": "2026-11-13",
+   "refund": "2026-11-17",
+   "price": 9600,
+   "price_confirmed": true,
+   "shares": 2000000,
+   "amount": 19200000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "하나증권",
+     "role": "대표",
+     "shares": 2000000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20260828",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260828001853"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20260918",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260918000439"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261015",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261015000329"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261106",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000070"
+    },
+    {
+     "kind": "final",
+     "title": "[발행조건확정]증권신고서(지분증권)",
+     "date": "20261110",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110000253"
+    },
+    {
+     "kind": "prospectus",
+     "title": "[기재정정]투자설명서",
+     "date": "20261110",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110000261"
+    }
+   ],
+   "source_rcept": "20261015000329",
+   "status": "refund"
+  },
+  {
+   "corp_code": "01403198",
+   "name": "제이앤티지",
+   "spac": false,
+   "sub_start": "2026-11-12",
+   "sub_end": "2026-11-13",
+   "refund": "2026-11-17",
+   "price": 26400,
+   "price_confirmed": true,
+   "shares": 4300000,
+   "amount": 113520000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "대신증권",
+     "role": "대표",
+     "shares": 3225000
+    },
+    {
+     "name": "NH투자증권",
+     "role": "공동",
+     "shares": 1075000
+    }
+   ],
+   "withdrawn": true,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261016",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016000426"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261104",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104000145"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000006"
+    },
+    {
+     "kind": "withdraw",
+     "title": "철회신고서",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000314"
+    }
+   ],
+   "source_rcept": "20261104000145",
+   "status": "withdrawn"
+  },
+  {
+   "corp_code": "00299109",
+   "name": "에스에프씨",
+   "spac": false,
+   "sub_start": "2026-11-18",
+   "sub_end": "2026-11-19",
+   "refund": "2026-11-23",
+   "price": 31600,
+   "price_confirmed": true,
+   "shares": 5000000,
+   "amount": 158000000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "미래에셋증권",
+     "role": "대표",
+     "shares": 3750000
+    },
+    {
+     "name": "한국투자증권",
+     "role": "공동",
+     "shares": 1000000
+    },
+    {
+     "name": "삼성증권",
+     "role": "인수",
+     "shares": 250000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261019",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261019000368"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261104",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104000099"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261110",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110000027"
+    }
+   ],
+   "source_rcept": "20261104000099",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01705573",
+   "name": "유캐스트",
+   "spac": false,
+   "sub_start": "2026-11-18",
+   "sub_end": "2026-11-19",
+   "refund": "2026-11-23",
+   "price": 19000,
+   "price_confirmed": true,
+   "shares": 800000,
+   "amount": 15200000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "유진증권",
+     "role": "대표",
+     "shares": 760000
+    },
+    {
+     "name": "신영증권",
+     "role": "인수",
+     "shares": 40000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "amend",
+     "title": "[정정제출요구]증권신고서(지분증권)",
+     "date": "20260909",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260909000378"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261021",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021000443"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261112",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000439"
+    }
+   ],
+   "source_rcept": "20261021000443",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01938746",
+   "name": "아델",
+   "spac": false,
+   "sub_start": "2026-11-23",
+   "sub_end": "2026-11-24",
+   "refund": "2026-11-26",
+   "price": 18000,
+   "price_confirmed": false,
+   "shares": 2170000,
+   "amount": 39060000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "삼성증권",
+     "role": "대표",
+     "shares": 1410500
+    },
+    {
+     "name": "미래에셋증권",
+     "role": "대표",
+     "shares": 759500
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261012",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012000445"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261027",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000312"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000327"
+    }
+   ],
+   "source_rcept": "20261111000327",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "02041694",
+   "name": "신영해피투모로우제12호기업인수목적",
+   "spac": true,
+   "sub_start": "2026-11-24",
+   "sub_end": "2026-11-25",
+   "refund": "2026-11-27",
+   "price": 2000,
+   "price_confirmed": false,
+   "shares": 6250000,
+   "amount": 12500000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "신영증권",
+     "role": "대표",
+     "shares": 6250000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261028",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028000471"
+    },
+    {
+     "kind": "amend",
+     "title": "[첨부정정]증권신고서(지분증권)",
+     "date": "20261029",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029000239"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000235"
+    }
+   ],
+   "source_rcept": "20261111000235",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01880139",
+   "name": "케이엠에프",
+   "spac": false,
+   "sub_start": "2026-11-24",
+   "sub_end": "2026-11-25",
+   "refund": "2026-11-27",
+   "price": 15000,
+   "price_confirmed": true,
+   "shares": 2000000,
+   "amount": 30000000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "아이비케이투자증권",
+     "role": "대표",
+     "shares": 2000000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261002",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261002000390"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261027",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000105"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261027",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000388"
+    },
+    {
+     "kind": "prospectus",
+     "title": "투자설명서",
+     "date": "20261028",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028000157"
+    }
+   ],
+   "source_rcept": "20261027000388",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01366675",
+   "name": "에이엔에이치스트럭쳐",
+   "spac": false,
+   "sub_start": "2026-11-27",
+   "sub_end": "2026-11-30",
+   "refund": "2026-12-02",
+   "price": 11200,
+   "price_confirmed": false,
+   "shares": 2100000,
+   "amount": 23520000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "NH투자증권",
+     "role": "대표",
+     "shares": 2100000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261020",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020000375"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000106"
+    }
+   ],
+   "source_rcept": "20261103000106",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01795859",
+   "name": "엔키화이트햇",
+   "spac": false,
+   "sub_start": "2026-12-01",
+   "sub_end": "2026-12-02",
+   "refund": "2026-12-04",
+   "price": 13000,
+   "price_confirmed": false,
+   "shares": 1700000,
+   "amount": 22100000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "신영증권",
+     "role": "대표",
+     "shares": 1700000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261008",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008000660"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261027",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000363"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261103",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000358"
+    },
+    {
+     "kind": "amend",
+     "title": "[첨부정정]증권신고서(지분증권)",
+     "date": "20261113",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113000615"
+    }
+   ],
+   "source_rcept": "20261103000358",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "02040710",
+   "name": "우리투자제1호기업인수목적",
+   "spac": true,
+   "sub_start": "2026-12-02",
+   "sub_end": "2026-12-03",
+   "refund": "2026-12-07",
+   "price": 2000,
+   "price_confirmed": false,
+   "shares": 6500000,
+   "amount": 13000000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "우리투자증권",
+     "role": "대표",
+     "shares": 6500000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261026",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026000285"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261106",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000449"
+    }
+   ],
+   "source_rcept": "20261106000449",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01783687",
+   "name": "이노보테라퓨틱스",
+   "spac": false,
+   "sub_start": "2026-12-07",
+   "sub_end": "2026-12-08",
+   "refund": "2026-12-10",
+   "price": 20000,
+   "price_confirmed": false,
+   "shares": 2200000,
+   "amount": 44000000000,
+   "face": 1000,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "한국투자증권",
+     "role": "대표",
+     "shares": 2200000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261021",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021000153"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261109",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000160"
+    }
+   ],
+   "source_rcept": "20261109000160",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01136597",
+   "name": "마더스제약",
+   "spac": false,
+   "sub_start": "2026-12-08",
+   "sub_end": "2026-12-09",
+   "refund": "2026-12-11",
+   "price": 11000,
+   "price_confirmed": false,
+   "shares": 2400000,
+   "amount": 26400000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "케이비증권",
+     "role": "대표",
+     "shares": 1200000
+    },
+    {
+     "name": "NH투자증권",
+     "role": "대표",
+     "shares": 1200000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261110",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110000330"
+    }
+   ],
+   "source_rcept": "20261110000330",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01706509",
+   "name": "다비오",
+   "spac": false,
+   "sub_start": "2026-12-09",
+   "sub_end": "2026-12-10",
+   "refund": "2026-12-14",
+   "price": 12300,
+   "price_confirmed": false,
+   "shares": 1000000,
+   "amount": 12300000000,
+   "face": 100,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "대신증권",
+     "role": "대표",
+     "shares": 1000000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "amend",
+     "title": "[정정제출요구]증권신고서(지분증권)",
+     "date": "20260915",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260915000390"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261008",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008000705"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261030",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030000682"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000426"
+    }
+   ],
+   "source_rcept": "20261111000426",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01860700",
+   "name": "인터엑스",
+   "spac": false,
+   "sub_start": "2026-12-09",
+   "sub_end": "2026-12-10",
+   "refund": "2026-12-14",
+   "price": 10000,
+   "price_confirmed": false,
+   "shares": 3000000,
+   "amount": 30000000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "한국투자증권",
+     "role": "대표",
+     "shares": 2700000
+    },
+    {
+     "name": "BNK투자증권",
+     "role": "인수",
+     "shares": 300000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261022",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261022000478"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000319"
+    }
+   ],
+   "source_rcept": "20261111000319",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01077540",
+   "name": "씨아이에스케미칼",
+   "spac": false,
+   "sub_start": "2026-12-10",
+   "sub_end": "2026-12-11",
+   "refund": "2026-12-15",
+   "price": 5400,
+   "price_confirmed": false,
+   "shares": 4000000,
+   "amount": 21600000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "케이비증권",
+     "role": "대표",
+     "shares": 4000000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261019",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261019000343"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261105",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105000234"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261111",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000341"
+    }
+   ],
+   "source_rcept": "20261111000341",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "00208709",
+   "name": "KTE",
+   "spac": false,
+   "sub_start": "2026-12-14",
+   "sub_end": "2026-12-15",
+   "refund": "2026-12-17",
+   "price": 19000,
+   "price_confirmed": false,
+   "shares": 2816000,
+   "amount": 53504000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "NH투자증권",
+     "role": "대표",
+     "shares": 2816000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261028",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028000336"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261112",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000478"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261112",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000690"
+    }
+   ],
+   "source_rcept": "20261112000690",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01135039",
+   "name": "데스틴파워",
+   "spac": false,
+   "sub_start": "2026-12-14",
+   "sub_end": "2026-12-15",
+   "refund": "2026-12-17",
+   "price": 8000,
+   "price_confirmed": false,
+   "shares": 2200000,
+   "amount": 17600000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "한국투자증권",
+     "role": "대표",
+     "shares": 2200000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261028",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028000434"
+    }
+   ],
+   "source_rcept": "20261028000434",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01950720",
+   "name": "제논",
+   "spac": false,
+   "sub_start": "2026-12-14",
+   "sub_end": "2026-12-15",
+   "refund": "2026-12-17",
+   "price": 9700,
+   "price_confirmed": false,
+   "shares": 2200000,
+   "amount": 21340000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "삼성증권",
+     "role": "대표",
+     "shares": 2200000
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "[첨부추가]증권신고서(지분증권)",
+     "date": "20261007",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261007000505"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261023",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023000486"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261026",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026000001"
+    },
+    {
+     "kind": "amend",
+     "title": "[첨부정정]증권신고서(지분증권)",
+     "date": "20261026",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026000367"
+    },
+    {
+     "kind": "amend",
+     "title": "[기재정정]증권신고서(지분증권)",
+     "date": "20261113",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001531"
+    }
+   ],
+   "source_rcept": "20261113001531",
+   "status": "upcoming"
+  },
+  {
+   "corp_code": "01912128",
+   "name": "태석광학",
+   "spac": false,
+   "sub_start": "2026-12-14",
+   "sub_end": "2026-12-15",
+   "refund": "2026-12-17",
+   "price": 17500,
+   "price_confirmed": false,
+   "shares": 2478000,
+   "amount": 43365000000,
+   "face": 500,
+   "method": "일반공모",
+   "underwriters": [
+    {
+     "name": "신한투자증권",
+     "role": "대표",
+     "shares": 1734600
+    },
+    {
+     "name": "대신증권",
+     "role": "대표",
+     "shares": 743400
+    }
+   ],
+   "withdrawn": false,
+   "has_result": false,
+   "filings": [
+    {
+     "kind": "filing",
+     "title": "증권신고서(지분증권)",
+     "date": "20261112",
+     "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000748"
+    }
+   ],
+   "source_rcept": "20261112000748",
+   "status": "upcoming"
+  }
+ ]
+}
